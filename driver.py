@@ -18,8 +18,12 @@ def getInputDeviceByName(name):
 
 def normVector(vect):
     Ovect=[0,0]
+    mag=0
     mag=math.sqrt(vect[0]**2+vect[1]**2)
-    Ovect[0],Ovect[1]=vect[0]/mag,vect[1]/mag
+    try:
+        Ovect[0],Ovect[1]=vect[0]/mag,vect[1]/mag
+    except ZeroDivisionError:
+        Ovect[0],Ovect[1]=vect[0]vect[1]
     return Ovect
 
 class Driver:
