@@ -64,7 +64,7 @@ class Driver:
         if Snormed:
             speed*=32767
         vectO=normVector(vect)
-        vectO[0],vectO[1]=vectO[0] * speed
+        vectO[0],vectO[1]=vectO[0] * speed, vectO[1]*speed
         print(vectO)
         self.runMotor(self.lmotor, vectO[0])
         self.runMotor(self.rmotor, vectO[1])
