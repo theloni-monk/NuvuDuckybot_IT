@@ -4,6 +4,7 @@ from Adafruit_MotorHAT import Adafruit_MotorHAT, Adafruit_DCMotor
 # Import additional libraries that support MotorHAT
 import time
 import atexit
+import vector
 from evdev import InputDevice, categorize, ecodes, KeyEvent, list_devices
 import math
 # Get the name of the Logitech Device
@@ -60,14 +61,12 @@ class Driver:
         self.runMotor(self.lmotor, 32767)
         self.runMotor(self.rmotor, 32767)
 
-    def runAngle(self, vect, speed=32767, Snormed=False):
-        if Snormed:
-            speed*=32767
-        vectO=normVector(vect)
-        vectO[0],vectO[1]=vectO[0] * speed
-        print(vectO)
-        self.runMotor(self.lmotor, vectO[0])
-        self.runMotor(self.rmotor, vectO[1])
+    def runAngle(self, vector, speed=1):
+        vector=normVector(vector)
+        vector *= speed
+        print(vector)
+        self.runMotorNorm(self.lmotor,vector[0])
+        self.runMotorNorm(self.rmotor,vector[1])
 
     def controllerOverride(self, **kwargs):
         """ Blocking: use for debug/override only """
@@ -102,10 +101,10 @@ class Driver:
                     print('TRIG_L '+str(event.value))
                 elif event.code == 3:
                     print('JOY_LR '+str(event.value))
-                    self.runAngle([1,0],event.value/32767)
+                    self.runAngle((1,0),event.value/32767)
                 elif event.code == 4:
                     print('JOY_UD '+str(event.value))
-                    self.runAngle([0,1], event.value/32767)
+                    self.runAngle((0,1),event.value/32767)
                 elif event.code == 5:
                     print('TRIG_R '+str(event.value))
                 elif event.code == 16:
