@@ -6,7 +6,7 @@ import time
 import atexit
 import vector
 from evdev import InputDevice, categorize, ecodes, KeyEvent, list_devices
-
+import math
 # Get the name of the Logitech Device
 
 
