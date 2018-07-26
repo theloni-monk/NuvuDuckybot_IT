@@ -17,6 +17,10 @@ def getInputDeviceByName(name):
             return InputDevice(device.fn)
     return None
 
+def normVector(vect):
+    mag=math.sqrt(vect[0]**2+vect[1]**2)
+    vect[0],vect[1]=vect[0]/mag,vect[1]/mag
+    return vect
 class Driver:
     def __init__(self, **kwargs):
         # create a default MotorHAT object, no changes to I2C address or frequency
@@ -56,6 +60,7 @@ class Driver:
         self.runMotor(self.rmotor, 32767)
 
     def runAngle(self, vector, speed=1):
+        vector=normVector(vector)
         vector *= speed
         self.runMotorNorm(self.lmotor,vector[0])
         self.runMotorNorm(self.rmotor,vector[1])
@@ -93,8 +98,10 @@ class Driver:
                     print('TRIG_L '+str(event.value))
                 elif event.code == 3:
                     print('JOY_LR '+str(event.value))
+                    self.runAngle([1,0],event.value/32767)
                 elif event.code == 4:
                     print('JOY_UD '+str(event.value))
+                    self.runAngle([0,1],event.value/32767)
                 elif event.code == 5:
                     print('TRIG_R '+str(event.value))
                 elif event.code == 16:
@@ -105,8 +112,6 @@ class Driver:
                     pass
 
 # recommended for auto-disabling motors on shutdown!
-
-
     def turnOffMotors(self):
         self.mh.getMotor(1).run(Adafruit_MotorHAT.RELEASE)
         self.mh.getMotor(2).run(Adafruit_MotorHAT.RELEASE)
