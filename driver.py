@@ -18,8 +18,12 @@ def getInputDeviceByName(name):
 
 def normVector(vect):
     Ovect=[0,0]
+    mag=0
     mag=math.sqrt(vect[0]**2+vect[1]**2)
-    Ovect[0],Ovect[1]=vect[0]/mag,vect[1]/mag
+    try:
+        Ovect[0],Ovect[1]=vect[0]/mag,vect[1]/mag
+    except ZeroDivisionError:
+        Ovect[0],Ovect[1]=vect[0],vect[1]
     return Ovect
 
 class Driver:
@@ -33,42 +37,48 @@ class Driver:
                 kwargs.get("deviceName", "Logitech Gamepad F710"))
         atexit.register(self.turnOffMotors)
 
-    def runMotor(self, motor, speed):
+    def runMotor(self, motor, speed, bias=0):
         """ motor - the motor object to control.
             speed - a number from -32768 (reverse) to 32768 (forward) """
-        # COMPLETE THIS FUNCTION!
-        if 1 <= speed <= 32768:
+        #print(speed)
+        if speed>0:
             motor.run(Adafruit_MotorHAT.FORWARD)
-            motor.setSpeed(int(speed*(255/32768)))
+        else:
+            motor.run(Adafruit_MotorHAT.BACKWARD)
+
+        if motor==self.lmotor:
+            speed-=bias
+        if 1 <= speed <= 32767:       
+            motor.setSpeed(int(speed*(255.0/32768.0)))
         elif speed > 32768:
-            motor.run(Adafruit_MotorHAT.FORWARD)
             motor.setSpeed(255)
         elif -1 < speed < 1:
             motor.setSpeed(0)
             self.mh.BRAKE
         elif -32768 <= speed <= -1:
-            motor.run(Adafruit_MotorHAT.BACKWARD)
-            motor.setSpeed(int(-speed*(255/32768)))
+            motor.setSpeed(int(-speed*(255.0/32768.0)))
         elif speed < -32768:
-            motor.run(Adafruit_MotorHAT.BACKWARD)
             motor.setSpeed(255)
 
     def runMotorNorm(self, motor, speed):
         return self.runMotor(motor, speed/32768)
 
-    def runDebug(self):
-        self.runMotor(self.lmotor, 32767)
-        self.runMotor(self.rmotor, 32767)
+    def runDebug(self, b):
+        self.runMotor(self.lmotor, 32767,b)
+        self.runMotor(self.rmotor, 32767,b)
 
-    def runAngle(self, vect, speed=32767, Snormed=False):
+    def runDiff(self, diff, speed=32767, Snormed=False):
         if Snormed:
             speed*=32767
-        vectO=normVector(vect)
+        vectO=normVector(diff)
         vectO[0],vectO[1]=vectO[0] * speed, vectO[1]*speed
         print(vectO)
         self.runMotor(self.lmotor, vectO[0])
         self.runMotor(self.rmotor, vectO[1])
 
+    def stop(self):
+        self.runDiff([0,0],0)
+    
     def controllerOverride(self, **kwargs):
         """ Blocking: use for debug/override only """
         # Get the name of the Logitech Device
@@ -98,16 +108,22 @@ class Driver:
                     print('PAD_LR '+str(event.value))
                 elif event.code == 1:
                     print('PAD_UD '+str(event.value))
+                
                 elif event.code == 2:
                     print('TRIG_L '+str(event.value))
+                    self.runDiff([-1,-1],int(event.value*180.2))
+                
                 elif event.code == 3:
                     print('JOY_LR '+str(event.value))
-                    self.runAngle([1,0],event.value)
+                    self.runDiff([1,-1],event.value)
+                
                 elif event.code == 4:
                     print('JOY_UD '+str(event.value))
-                    self.runAngle([0,1], event.value)
+                    #self.runAngle([1,1], event.value)
                 elif event.code == 5:
                     print('TRIG_R '+str(event.value))
+                    self.runDiff([1,1],int(event.value*182.2))
+
                 elif event.code == 16:
                     print('HAT_LR '+str(event.value))
                 elif event.code == 17:
@@ -126,6 +142,8 @@ class Driver:
 
 if __name__ == "__main__":
     driver = Driver(enableController=True)
-    while True: 
-        driver.runDebug()
-    #driver.controllerOverride()
+    while(True):
+        driver.stop()
+        tune=int(raw_input("input tuning var"))
+        driver.runDebug(tune)
+        time.sleep(5)
