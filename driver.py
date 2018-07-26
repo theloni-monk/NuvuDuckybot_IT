@@ -23,7 +23,7 @@ def normVector(vect):
     try:
         Ovect[0],Ovect[1]=vect[0]/mag,vect[1]/mag
     except ZeroDivisionError:
-        Ovect[0],Ovect[1]=vect[0]vect[1]
+        Ovect[0],Ovect[1]=vect[0],vect[1]
     return Ovect
 
 class Driver:
