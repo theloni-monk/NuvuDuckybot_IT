@@ -64,8 +64,8 @@ class Driver:
         return self.runMotor(motor, speed/32768)
 
     def runDebug(self, b):
-        self.runMotor(self.lmotor, 32767-b)
-        self.runMotor(self.rmotor, 32767-b)
+        self.runMotor(self.lmotor, 32767,b)
+        self.runMotor(self.rmotor, 32767,b)
 
     def runDiff(self, diff, speed=32767, Snormed=False):
         if Snormed:
