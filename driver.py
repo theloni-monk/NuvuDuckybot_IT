@@ -73,7 +73,7 @@ class Driver:
         self.runMotor(self.rmotor, vectO[1])
 
     def stop(self):
-        self.runMotor(0,0)
+        self.runDiff([0,0],0)
     
     def controllerOverride(self, **kwargs):
         """ Blocking: use for debug/override only """
@@ -142,4 +142,4 @@ if __name__ == "__main__":
         driver.stop()
         tune=int(raw_input("input tuning var"))
         driver.runDebug(tune)
-        time.sleep(10)
+        time.sleep(5)
