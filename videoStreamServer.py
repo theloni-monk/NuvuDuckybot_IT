@@ -7,7 +7,7 @@ s.bind(('localhost', 8080))
 s.listen(10)
 
 while True:
-    conn, addr = sock.accept()
+    conn, addr = s.accept()
     print('Connected with ' + addr[0] + ':' + str(addr[1]))
     break
     
