@@ -128,4 +128,5 @@ if __name__ == "__main__":
     driver = Driver(enableController=True)
     while True: 
         driver.runDebug()
+        print("hi david")
     #driver.controllerOverride()
