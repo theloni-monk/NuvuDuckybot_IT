@@ -33,7 +33,7 @@ class Driver:
                 kwargs.get("deviceName", "Logitech Gamepad F710"))
         atexit.register(self.turnOffMotors)
 
-    def runMotor(self, motor, speed):
+    def runMotor(self, motor, speed, bias=0):
         """ motor - the motor object to control.
             speed - a number from -32768 (reverse) to 32768 (forward) """
         #print(speed)
@@ -41,8 +41,9 @@ class Driver:
             motor.run(Adafruit_MotorHAT.FORWARD)
         else:
             motor.run(Adafruit_MotorHAT.BACKWARD)
+
         if motor==self.rmotor:
-            speed-=1000
+            speed-=bias
         if 1 <= speed <= 32767:       
             motor.setSpeed(int(speed*(255.0/32768.0)))
         elif speed > 32768:
@@ -58,9 +59,9 @@ class Driver:
     def runMotorNorm(self, motor, speed):
         return self.runMotor(motor, speed/32768)
 
-    def runDebug(self):
-        self.runMotor(self.lmotor, 32767)
-        self.runMotor(self.rmotor, 32767)
+    def runDebug(self, b):
+        self.runMotor(self.lmotor, 32767-b)
+        self.runMotor(self.rmotor, 32767-b)
 
     def runDiff(self, diff, speed=32767, Snormed=False):
         if Snormed:
@@ -134,4 +135,7 @@ class Driver:
 
 if __name__ == "__main__":
     driver = Driver(enableController=True)
-    driver.controllerOverride()
+    while(True):
+        tune=int(raw_input("input tuning var"))
+        driver.runDebug(tune)
+        time.sleep(10)
