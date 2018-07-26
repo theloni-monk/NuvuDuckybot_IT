@@ -38,21 +38,20 @@ class Driver:
             speed - a number from -32768 (reverse) to 32768 (forward) """
         #print(speed)
         if 1 <= speed <= 32767:
-            motor.run(Adafruit_MotorHAT.FORWARD)
+            #motor.run(Adafruit_MotorHAT.FORWARD)
             motor.setSpeed(int(speed*(255.0/32768.0)))
 
         elif speed > 32768:
-            motor.run(Adafruit_MotorHAT.FORWARD)
+            #motor.run(Adafruit_MotorHAT.FORWARD)
             motor.setSpeed(255)
-
         elif -1 < speed < 1:
             motor.setSpeed(0)
             self.mh.BRAKE
         elif -32768 <= speed <= -1:
-            motor.run(Adafruit_MotorHAT.BACKWARD)
+            #motor.run(Adafruit_MotorHAT.BACKWARD)
             motor.setSpeed(int(-speed*(255.0/32768.0)))
         elif speed < -32768:
-            motor.run(Adafruit_MotorHAT.BACKWARD)
+            #motor.run(Adafruit_MotorHAT.BACKWARD)
             motor.setSpeed(255)
 
     def runMotorNorm(self, motor, speed):
@@ -104,7 +103,7 @@ class Driver:
                     print('TRIG_L '+str(event.value))
                 elif event.code == 3:
                     print('JOY_LR '+str(event.value))
-                    self.runAngle([1,0],event.value)
+                    self.runAngle([1,-1],event.value)
                 elif event.code == 4:
                     print('JOY_UD '+str(event.value))
                     self.runAngle([1,1], event.value)
