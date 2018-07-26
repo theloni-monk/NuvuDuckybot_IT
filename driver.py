@@ -37,8 +37,8 @@ class Driver:
         """ motor - the motor object to control.
             speed - a number from -32768 (reverse) to 32768 (forward) """
         #print(speed)
-        if 1 <= speed <= 32767:
-            #motor.run(Adafruit_MotorHAT.FORWARD)
+        motor.run(Adafruit_MotorHAT.FORWARD)
+        if 1 <= speed <= 32767:       
             motor.setSpeed(int(speed*(255.0/32768.0)))
 
         elif speed > 32768:
