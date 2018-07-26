@@ -65,7 +65,7 @@ class Driver:
             if event.type == ecodes.EV_KEY:
                 keyevent = categorize(event)
                 if keyevent.keystate == KeyEvent.key_down:
-                print(keyevent.keycode)
+                    print(keyevent.keycode)
                 # example key detection code
                 if 'BTN_A' in keyevent.keycode:
                     # Do something here when the A button is pressed
