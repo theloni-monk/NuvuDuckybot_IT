@@ -2,7 +2,7 @@ import socket
 import cv2
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.bind(('localhost', 444))
+s.bind(('', 444))
 
 s.listen(10)
 
