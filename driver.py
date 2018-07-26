@@ -101,7 +101,7 @@ class Driver:
                     print('PAD_UD '+str(event.value))
                 elif event.code == 2:
                     print('TRIG_L '+str(event.value))
-                    self.runDiff
+                    self.runDiff([-1,-1],event.value)
                 elif event.code == 3:
                     print('JOY_LR '+str(event.value))
                     self.runDiff([1,-1],event.value)
