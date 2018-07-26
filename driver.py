@@ -20,7 +20,7 @@ def normVector(vect):
     Ovect=[0,0]
     mag=math.sqrt(vect[0]**2+vect[1]**2)
     Ovect[0],Ovect[1]=vect[0]/mag,vect[1]/mag
-    return tuple(Ovect)
+    return Ovect
 
 class Driver:
     def __init__(self, **kwargs):
