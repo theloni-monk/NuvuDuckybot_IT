@@ -46,7 +46,7 @@ class Driver:
         else:
             motor.run(Adafruit_MotorHAT.BACKWARD)
 
-        if motor==self.rmotor:
+        if motor==self.lmotor:
             speed-=bias
         if 1 <= speed <= 32767:       
             motor.setSpeed(int(speed*(255.0/32768.0)))
