@@ -21,11 +21,12 @@ class Driver:
     def __init__(self, **kwargs):
         # create a default MotorHAT object, no changes to I2C address or frequency
         self.mh = Adafruit_MotorHAT(addr=0x60)
-        self.lmotor = mh.getMotor(kwargs.get("motorLeft", 1))
-        self.rmotor = mh.getMotor(kwargs.get("motorRight", 4))
+        self.lmotor = self.mh.getMotor(kwargs.get("motorLeft", 1))
+        self.rmotor = self.mh.getMotor(kwargs.get("motorRight", 4))
         if kwargs.get("enableController", False):
             self.gamepad = getInputDeviceByName(
                 kwargs.get("deviceName", "Logitech Gamepad F710"))
+        atexit.register(self.turnOffMotors)
 
     def runMotor(self, motor, speed):
         """ motor - the motor object to control.
@@ -39,7 +40,7 @@ class Driver:
             motor.setSpeed(255)
         elif -1 < speed < 1:
             motor.setSpeed(0)
-            mh.BRAKE
+            self.mh.BRAKE
         elif -32768 <= speed <= -1:
             motor.run(Adafruit_MotorHAT.BACKWARD)
             motor.setspeed(int(-speed*(255/32768)))
@@ -56,11 +57,21 @@ class Driver:
 
     def runAngle(self, vector, speed=1):
         vector *= speed
-        self.runMotorNorm(self.motorl,vector[0])
-        self.runMotorNorm(self.motorr,vector[1])
+        self.runMotorNorm(self.lmotor,vector[0])
+        self.runMotorNorm(self.rmotor,vector[1])
 
     def controllerOverride(self, **kwargs):
         """ Blocking: use for debug/override only """
+        # Get the name of the Logitech Device
+        def getInputDeviceByName(name):
+            devices = [InputDevice(fn) for fn in list_devices()]
+            for device in devices:
+                if device.name == name:
+                    return InputDevice(device.fn)
+            return None
+
+        # Import our gamepad.
+        gamepad = getInputDeviceByName('Logitech Gamepad F710')        
         for event in gamepad.read_loop():
             if event.type == ecodes.EV_KEY:
                 keyevent = categorize(event)
@@ -96,14 +107,13 @@ class Driver:
 # recommended for auto-disabling motors on shutdown!
 
 
-def turnOffMotors():
-    mh.getMotor(1).run(Adafruit_MotorHAT.RELEASE)
-    mh.getMotor(2).run(Adafruit_MotorHAT.RELEASE)
-    mh.getMotor(3).run(Adafruit_MotorHAT.RELEASE)
-    mh.getMotor(4).run(Adafruit_MotorHAT.RELEASE)
+    def turnOffMotors(self):
+        self.mh.getMotor(1).run(Adafruit_MotorHAT.RELEASE)
+        self.mh.getMotor(2).run(Adafruit_MotorHAT.RELEASE)
+        self.mh.getMotor(3).run(Adafruit_MotorHAT.RELEASE)
+        self.mh.getMotor(4).run(Adafruit_MotorHAT.RELEASE)
 
 
-atexit.register(turnOffMotors)
 
 if __name__ == "__main__":
     driver = Driver(enableController=True)
