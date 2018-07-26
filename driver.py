@@ -99,9 +99,11 @@ class Driver:
                     print('PAD_LR '+str(event.value))
                 elif event.code == 1:
                     print('PAD_UD '+str(event.value))
+                
                 elif event.code == 2:
                     print('TRIG_L '+str(event.value))
                     self.runDiff([-1,-1],event.value)
+                
                 elif event.code == 3:
                     print('JOY_LR '+str(event.value))
                     self.runDiff([1,-1],event.value)
@@ -111,7 +113,7 @@ class Driver:
                     #self.runAngle([1,1], event.value)
                 elif event.code == 5:
                     print('TRIG_R '+str(event.value))
-                    self.runDiff([1,1])
+                    self.runDiff([1,1],event.value)
 
                 elif event.code == 16:
                     print('HAT_LR '+str(event.value))
