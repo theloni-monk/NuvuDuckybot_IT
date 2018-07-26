@@ -72,6 +72,9 @@ class Driver:
         self.runMotor(self.lmotor, vectO[0])
         self.runMotor(self.rmotor, vectO[1])
 
+    def stop(self):
+        self.runMotor(0,0)
+    
     def controllerOverride(self, **kwargs):
         """ Blocking: use for debug/override only """
         # Get the name of the Logitech Device
@@ -136,6 +139,7 @@ class Driver:
 if __name__ == "__main__":
     driver = Driver(enableController=True)
     while(True):
+        self.stop()
         tune=int(raw_input("input tuning var"))
         driver.runDebug(tune)
         time.sleep(10)
