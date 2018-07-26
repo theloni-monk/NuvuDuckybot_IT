@@ -139,7 +139,7 @@ class Driver:
 if __name__ == "__main__":
     driver = Driver(enableController=True)
     while(True):
-        self.stop()
+        driver.stop()
         tune=int(raw_input("input tuning var"))
         driver.runDebug(tune)
         time.sleep(10)
