@@ -18,9 +18,11 @@ def getInputDeviceByName(name):
     return None
 
 def normVector(vect):
+    Ovect=[0,0]
     mag=math.sqrt(vect[0]**2+vect[1]**2)
-    vect[0],vect[1]=vect[0]/mag,vect[1]/mag
-    return vect
+    Ovect[0],Ovect[1]=vect[0]/mag,vect[1]/mag
+    return tuple(Ovect)
+
 class Driver:
     def __init__(self, **kwargs):
         # create a default MotorHAT object, no changes to I2C address or frequency
@@ -62,6 +64,7 @@ class Driver:
     def runAngle(self, vector, speed=1):
         vector=normVector(vector)
         vector *= speed
+        print(vector)
         self.runMotorNorm(self.lmotor,vector[0])
         self.runMotorNorm(self.rmotor,vector[1])
 
@@ -98,10 +101,10 @@ class Driver:
                     print('TRIG_L '+str(event.value))
                 elif event.code == 3:
                     print('JOY_LR '+str(event.value))
-                    self.runAngle([1,0],event.value/32767)
+                    self.runAngle((1,0),event.value/32767)
                 elif event.code == 4:
                     print('JOY_UD '+str(event.value))
-                    self.runAngle([0,1],event.value/32767)
+                    self.runAngle((0,1),event.value/32767)
                 elif event.code == 5:
                     print('TRIG_R '+str(event.value))
                 elif event.code == 16:
