@@ -37,21 +37,21 @@ class Driver:
         """ motor - the motor object to control.
             speed - a number from -32768 (reverse) to 32768 (forward) """
         #print(speed)
-        motor.run(Adafruit_MotorHAT.FORWARD)
+        if speed>0:
+            motor.run(Adafruit_MotorHAT.FORWARD)
+        else:
+            motor.run(Adafruit_MotorHAT.BACKWARD)
+        
         if 1 <= speed <= 32767:       
             motor.setSpeed(int(speed*(255.0/32768.0)))
-
         elif speed > 32768:
-            #motor.run(Adafruit_MotorHAT.FORWARD)
             motor.setSpeed(255)
         elif -1 < speed < 1:
             motor.setSpeed(0)
             self.mh.BRAKE
         elif -32768 <= speed <= -1:
-            #motor.run(Adafruit_MotorHAT.BACKWARD)
             motor.setSpeed(int(-speed*(255.0/32768.0)))
         elif speed < -32768:
-            #motor.run(Adafruit_MotorHAT.BACKWARD)
             motor.setSpeed(255)
 
     def runMotorNorm(self, motor, speed):
@@ -61,10 +61,10 @@ class Driver:
         self.runMotor(self.lmotor, 32767)
         self.runMotor(self.rmotor, 32767)
 
-    def runAngle(self, vect, speed=32767, Snormed=False):
+    def runDiff(self, diff, speed=32767, Snormed=False):
         if Snormed:
             speed*=32767
-        vectO=normVector(vect)
+        vectO=normVector(diff)
         vectO[0],vectO[1]=vectO[0] * speed, vectO[1]*speed
         print(vectO)
         self.runMotor(self.lmotor, vectO[0])
@@ -101,14 +101,18 @@ class Driver:
                     print('PAD_UD '+str(event.value))
                 elif event.code == 2:
                     print('TRIG_L '+str(event.value))
+                    self.runDiff
                 elif event.code == 3:
                     print('JOY_LR '+str(event.value))
-                    self.runAngle([1,-1],event.value)
+                    self.runDiff([1,-1],event.value)
+                
                 elif event.code == 4:
                     print('JOY_UD '+str(event.value))
-                    self.runAngle([1,1], event.value)
+                    #self.runAngle([1,1], event.value)
                 elif event.code == 5:
                     print('TRIG_R '+str(event.value))
+                    self.runDiff([1,1])
+
                 elif event.code == 16:
                     print('HAT_LR '+str(event.value))
                 elif event.code == 17:
