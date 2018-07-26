@@ -36,7 +36,7 @@ class Driver:
     def runMotor(self, motor, speed):
         """ motor - the motor object to control.
             speed - a number from -32768 (reverse) to 32768 (forward) """
-        # COMPLETE THIS FUNCTION!
+        print(speed)
         if 1 <= speed <= 32768:
             motor.run(Adafruit_MotorHAT.FORWARD)
             motor.setSpeed(int(speed*(255/32768)))
@@ -128,5 +128,5 @@ if __name__ == "__main__":
     driver = Driver(enableController=True)
     while True: 
         driver.runDebug()
-        print("hi david")
+        #print("hi david")
     #driver.controllerOverride()
