@@ -48,10 +48,10 @@ class Driver:
             self.mh.BRAKE
         elif -32768 <= speed <= -1:
             motor.run(Adafruit_MotorHAT.BACKWARD)
-            motor.setspeed(int(-speed*(255/32768)))
+            motor.setSpeed(int(-speed*(255/32768)))
         elif speed < -32768:
             motor.run(Adafruit_MotorHAT.BACKWARD)
-            motor.setspeed(255)
+            motor.setSpeed(255)
 
     def runMotorNorm(self, motor, speed):
         return self.runMotor(motor, speed/32768)
