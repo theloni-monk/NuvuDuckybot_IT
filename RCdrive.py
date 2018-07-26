@@ -45,6 +45,6 @@ for event in gamepad.read_loop():
     else:
       pass
 
-def drive(vector, speed):
-  vector[0],vector[1]=
-  lval=vector[]
+# def drive(vector, speed):
+#   vector[0],vector[1]=
+#   lval=vector[]
