@@ -1,7 +1,7 @@
 import cv2
 from camera import Camera
 import numpy as np
-import nano
+import time
 def grayscale(img): return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
 
