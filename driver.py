@@ -17,7 +17,6 @@ def getInputDeviceByName(name):
             return InputDevice(device.fn)
     return None
 
-
 class Driver:
     def __init__(self, **kwargs):
         # create a default MotorHAT object, no changes to I2C address or frequency
@@ -57,8 +56,8 @@ class Driver:
 
     def runAngle(self, vector, speed=1):
         vector *= speed
-        self.runMotorNorm(vector.x)
-        self.runMotorNorm(vector.y)
+        self.runMotorNorm(self.motorl,vector[0])
+        self.runMotorNorm(self.motorr,vector[1])
 
     def controllerOverride(self, **kwargs):
         """ Blocking: use for debug/override only """
