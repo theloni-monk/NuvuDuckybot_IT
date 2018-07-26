@@ -1,0 +1,1 @@
+rsync -r -v -e ssh --delete nuvustudent@18.111.87.85:/home/nuvustudent/NuvuDuckieBot-TI/test ~/Desktop/duckieRemote/
