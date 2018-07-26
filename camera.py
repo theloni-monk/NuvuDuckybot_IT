@@ -19,7 +19,7 @@ class Camera:
     @property
     def image(self):
         ret_val, img = self.cam.read()
-        if self.mirror:
+        if self.mirror: 
             img = cv2.flip(img, 1)
         self.output = img
         return img
@@ -27,7 +27,4 @@ class Camera:
 
 if __name__ == "__main__":
     cam = Camera(mirror=True)
-    while 1:
-        cv2.imshow('my webcam', cam.image)
-        if cv2.waitKey(1) == 27:
-            break  # esc to quit
+    cv2.imwrite("test_image.png")
