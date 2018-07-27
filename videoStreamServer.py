@@ -2,8 +2,9 @@ import socket
 import cv2
 import camera
 import io
+import pickle
 
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s = socket.socket()
 s.bind(('', 444))
 
 s.listen(10)
@@ -18,6 +19,6 @@ cam = camera.Camera()
 while True:
     b = io.BytesIO()
     img = pickle.dump(cam.image,b)
-    s.send(b.getvalue())
+    conn.send(b.getvalue())
 
 s.close()
