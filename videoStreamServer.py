@@ -7,6 +7,7 @@ from tempfile import TemporaryFile
 import zstandard
 import atexit
 from netutils import *
+import laneDetection
 
 class Server:
     def __init__(self,**kwargs):
@@ -49,9 +50,14 @@ class Server:
 
     def close(self):
         self.s.close()
-    
+
+def retrieveImage(cam):
+    image = cam.image
+    image = laneDetection.process(image)
+    image = cv2.resize(image, (0,0), fx=0.5, fy=0.5)
+    return image
 if __name__ == "__main__":
-    cam = camera.Camera()
+    cam = camera.Camera(mirror=True)
     server = Server(port=5000)
     server.serve()
-    server.startStream(lambda:cv2.resize(cam.image, (0,0), fx=0.5, fy=0.5))
+    server.startStream(retrieveImage,[cam])
