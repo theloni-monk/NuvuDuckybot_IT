@@ -5,6 +5,7 @@ import io
 import numpy as np
 from tempfile import TemporaryFile
 import zstandard
+import atexit
 
 class Server:
     def __init__(self,**kwargs):
@@ -13,11 +14,14 @@ class Server:
         s.listen(10)
         self.s = s
         self.verbose = kwargs.get("verbose",True)
+        atexit.register(self.close)
+
     def serve(self):
         while True:
             self.conn, self.clientAddr = self.s.accept()
             if self.verbose:
                 print('Connected with ' + self.clientAddr[0] + ':' + str(self.clientAddr[1]))
+
     def startStream(self,getFrame,args=[]):
         #not sure if np.save compression is worth io overhead...
         Tfile=TemporaryFile()
@@ -30,12 +34,15 @@ class Server:
             #compress it into even less bytes
             b = io.BytesIO(C.compress(Tfile.read(Tfile.tell()).encode()))
             #send it            
-            self.conn.send(b.getvalue())
+            print("sending...")
+            lend=self.conn.send(b.getvalue())
+            print("Sent {}KB".format(int(lend/1000)))
+
     def close(self):
         self.s.close()
     
 if __name__ == "__main__":
     cam = camera.Camera()
-    server = Server()
+    server = Server(port=5000)
     server.serve()
     server.startStream(lambda:cam.image)
