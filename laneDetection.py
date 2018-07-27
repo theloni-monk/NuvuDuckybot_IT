@@ -60,11 +60,11 @@ def process(color):
     edges = autoCanny(img)
     output = color #np.zeros(color.shape)  # edges.reshape([edges.shape[0],edges.shape[1],1])
 
-    lines = cv2.HoughLines(edges, 1, np.pi/180, 80)
+    lines = cv2.HoughLines(edges, 1, np.pi/180, 120)
     if lines is None:
         return output
-    for line in lines[:10]:
-        for rho, theta in line:
+    for line in lines:
+        for rho, theta in line[:10]:
             a = np.cos(theta)
             b = np.sin(theta)
             x0 = a*rho
