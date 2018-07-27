@@ -31,7 +31,7 @@ while True:
     #compress it into even less bytes
     b = io.BytesIO(C.compress(Tfile.read(Tfile.tell()).encode()))
     #send it
-    print("sending "+b)
+    print("sending...")
     conn.send(b.getvalue())
 
 s.close()
