@@ -19,10 +19,8 @@ cam = camera.Camera()
 
 while True:
     b = io.BytesIO()
-
-    img = pickle.dump(zstd.compress(cam.image,b)
-    #print(b)
-    
+    img=cam.image()
+    pickle.dump(zstd.compress(img,b)
     conn.send(b.getvalue())
 
 s.close()
