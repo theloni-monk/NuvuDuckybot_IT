@@ -66,14 +66,14 @@ def process(color):
         (width / 2, height / 2),
         (width, height),
     ]
-    color = region_of_interest(color,region_of_interest_vertices)
+    #color = region_of_interest(color,region_of_interest_vertices)
 
     img = grayscale(color)
     img=cv2.GaussianBlur(img,(5,5),0)
     edges = autoCanny(img)
     output = color #np.zeros(color.shape)  # edges.reshape([edges.shape[0],edges.shape[1],1])
 
-    lines = cv2.HoughLines(edges, 1, np.pi/180, 80)
+    lines = cv2.HoughLines(edges, 1, np.pi/180, 200)
     if lines is None:
         return output
     for line in lines:
