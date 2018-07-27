@@ -2,7 +2,8 @@ import socket
 import pickle
 import io
 import cv2
-import zstd
+# zstd might work on other computers but only zstandard will work with mine
+import zstandard
 
 ip = "18.111.87.85"
 s = socket.socket()
@@ -28,7 +29,7 @@ while 1:
     print("Read {}KB".format(int(len(r)/1000)))
     
     print("Done reading...")
-    img = zstd.decompress(pickle.load(r))
+    img = zstandard.ZstdDecompressor().decompress(pickle.load(r))
     cv2.imshow("feed",img)
     if cv2.waitKey(1) == 27:
         break  # esc to quit
