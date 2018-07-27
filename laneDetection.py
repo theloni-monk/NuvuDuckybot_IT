@@ -31,7 +31,6 @@ def unzero(x):
         x = 0.001
     return x
 
-
 def getLineColor(img, m, b, step=2):
     bottom = min(max((-b)/m, 0), img.shape[1]-1)
 
@@ -79,6 +78,7 @@ def process(color):
 
     lines = cv2.HoughLines(edges, 1, np.pi/180, 200)
     if lines is None:
+        print("no lines found")
         return output
 
     for line in lines:
@@ -102,6 +102,7 @@ def process(color):
                      (1000, int(m*1000+b)), tuple(lineColor), 2)
             #print(lineColor)
             cv2.circle(output, (int(x0), int(y0)), 4, (255, 0, 0), -1)
+
     return output
 
 if __name__ == "__main__":
