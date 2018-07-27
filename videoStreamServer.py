@@ -27,24 +27,30 @@ class Server:
                 #print('Connected with ' + self.clientAddr[0] + ':' + str(self.clientAddr[1]))
                 return
     def startStream(self,getFrame,args=[]):
-        #not sure if np.save compression is worth io overhead...
-        
+        #send initial frame
+        Sfile=io.BytesIO()
         C=zstandard.ZstdCompressor()
-        #print("Starting stream...")
+        prevFrame=getFrame(*args)
+        np.save(Sfile,prevFrame)
+        send_msg(self.conn,C.compress(Sfile.getvalue()))
+
         while True:
             Tfile=io.BytesIO()
             #fetch the image
             #print ("Fetching frame...")
             img=getFrame(*args)
-            #print ("Saving array to tfile...")
-            #use numpys built in save function to convert image to bytes
-            np.save(Tfile,img)
-            #print ("Compressing...")
+
+            #use numpys built in save function to diff with prevframe
+            #because we diff it it will compress more
+            np.save(Tfile,np.diff(img,prevFrame))
+
             #compress it into even less bytes
             b = C.compress(Tfile.getvalue())
+
+            #reassing prev frame
+            prevFrame=img
+
             #send it            
-            #print("sending...")
-            #lend=self.conn.sendall(b)
             send_msg(self.conn,b)
             #print("Sent {}KB".format(int(lend/1000)))
 

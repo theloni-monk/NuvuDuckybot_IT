@@ -31,6 +31,7 @@ class Client:
         
     def startStream(self):
         img = np.zeros((3,3))
+        prevFrame = np.load(io.BytesIO(self.D.decompress(recv_msg(self.s))))
         while True:
             print("Reading...")
             r = recv_msg(self.s)
@@ -41,11 +42,15 @@ class Client:
 
             #load decompressed image
             try:
-                img = np.load(io.BytesIO(self.D.decompress(r)))
+                # we are reciveing a diff so we use a logical and to recover the frame
+                img = np.logical_and(np.load(io.BytesIO(self.D.decompress(r))),prevFrame)
             except Exception as e:
                 print(e)
 
-            cv2.imshow("feed",cv2.resize(img, (0,0), fx=3.0, fy=3.0))
+            prevFrame=img
+
+            #show it scaled up 
+            cv2.imshow("feed",cv2.resize(img, (0,0), fx=4.0, fy=4.0))
             if cv2.waitKey(1) == 27:
                 break  # esc to quit
     
