@@ -60,11 +60,7 @@ class Server:
 def retrieveImage(cam):
     image = cam.imageNoDistort
     image = laneDetection.process(image)
-<<<<<<< HEAD
     image = cv2.resize(image, (0,0), fx=1.0, fy=1.0)
-=======
-    image = cv2.resize(image, (0,0), fx=1, fy=1)
->>>>>>> 63987aed9a5996fa6c55d00c9260a82963513361
     return image
 
 if __name__ == "__main__":
