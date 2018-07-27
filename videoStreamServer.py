@@ -58,8 +58,8 @@ class Server:
         self.s.close()
 
 def retrieveImage(cam):
-    image = cam.image
-    image = laneDetection.process(imageNoDistort)
+    image = cam.imageNoDistort
+    image = laneDetection.process(image)
     image = cv2.resize(image, (0,0), fx=1, fy=1)
     return image
 
