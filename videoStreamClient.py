@@ -11,8 +11,11 @@ class Client:
 
     def __init__(self, **kwargs):
         self.ip = kwargs.get("serverIp","18.111.87.85")
+<<<<<<< HEAD
         self.res= kwargs.get("rez",(1920,1080))
         self.iRes=(1280,720)
+=======
+>>>>>>> 5f779c126cc05bd4c09edd0d3f7e2623368699cf
         self.s = socket.socket()
         self.s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.s.connect((self.ip, kwargs.get("port",444)))
@@ -35,8 +38,7 @@ class Client:
         img = np.zeros((3,3))
         #initial
         prevFrame = np.load(io.BytesIO(self.D.decompress(recv_msg(self.s))))
-        self.iRes=np.array(prevFrame).shape
-        cv2.namedWindow("live stream")
+
         while True:
             print("Reading...")
             r = recv_msg(self.s)
@@ -55,8 +57,8 @@ class Client:
 
             prevFrame=img
 
-            #show it scaled up
-            cv2.imshow("live stream",cv2.resize(img, (0,0), fx=2.0, fy=2.0))
+            #show it scaled up 
+            cv2.imshow("feed",cv2.resize(img, (0,0), fx=1.0, fy=1.0))
             if cv2.waitKey(1) == 27:
                 break  # esc to quit
     
@@ -64,9 +66,13 @@ class Client:
         self.s.close()
 
 if __name__=="__main__":
+<<<<<<< HEAD
     ianIp="10.189.81.154"
     rasPiIp="18.111.87.85"
     client=Client(serverIp=rasPiIp,port=5000)
+=======
+    client=Client(port=5000)
+>>>>>>> 5f779c126cc05bd4c09edd0d3f7e2623368699cf
     client.startStream()
     
 

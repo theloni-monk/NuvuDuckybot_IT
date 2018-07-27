@@ -73,7 +73,6 @@ def process(color):
     edges = autoCanny(img)
     output = color #np.zeros(color.shape)  # edges.reshape([edges.shape[0],edges.shape[1],1])
 
-    lines = cv2.HoughLines(edges, 1, np.pi/180, 80)
     if lines is None:
         return output
     for line in lines:
