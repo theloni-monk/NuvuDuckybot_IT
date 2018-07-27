@@ -29,6 +29,7 @@ while 1:
     print("Read {}KB".format(int(len(r)/1000)))
     
     print("Done reading...")
+    #hopefully this works
     img = np.load(zstandard.ZstdDecompressor().decompress(r))
     cv2.imshow("feed",img)
     if cv2.waitKey(1) == 27:
