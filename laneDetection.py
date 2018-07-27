@@ -53,7 +53,7 @@ def UnPerp(img):
     return cv2.warpPerspective(img,M)
     
 def process(color):
-    #color = color[color.shape[0]//2:, :]
+    color = color[color.shape[0]//2:, :]
     img = grayscale(color)
     kernel = np.ones((5, 5), np.float32)/25
     img = cv2.filter2D(img, -1, kernel)
