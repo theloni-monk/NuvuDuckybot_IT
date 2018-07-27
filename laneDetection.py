@@ -55,8 +55,7 @@ def UnPerp(img):
 def process(color):
     color = color[color.shape[0]//2:, :]
     img = grayscale(color)
-    kernel = np.ones((5, 5), np.float32)/25
-    img = cv2.filter2D(img, -1, kernel)
+    img=cv2.GaussianBlur(img,(7,7),0)
     edges = autoCanny(img)
     output = color #np.zeros(color.shape)  # edges.reshape([edges.shape[0],edges.shape[1],1])
 
