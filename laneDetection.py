@@ -61,12 +61,16 @@ def UnPerp(img):
 def process(color):
     height = color.shape[0]
     width = color.shape[1]
+    horizonOffset=300
+    HhorizonOffset=200
     region_of_interest_vertices = [
         (0, height),
-        (width / 2, height / 2),
+        (width - HhorizonOffset, height+horizonOffset),
+        (width + HhorizonOffset, height+horizonOffset),
         (width, height),
     ]
-    color = region_of_interest(color,region_of_interest_vertices)
+
+    color = region_of_interest(color, region_of_interest_vertices)
 
     img = grayscale(color)
     img=cv2.GaussianBlur(img,(5,5),0)
@@ -76,6 +80,7 @@ def process(color):
     lines = cv2.HoughLines(edges, 1, np.pi/180, 200)
     if lines is None:
         return output
+
     for line in lines:
         for rho, theta in line[:10]:
             a = np.cos(theta)
