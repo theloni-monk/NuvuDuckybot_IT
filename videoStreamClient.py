@@ -64,8 +64,12 @@ class Client:
         self.s.close()
 
 if __name__=="__main__":
+<<<<<<< HEAD
     ianIp="10.189.81.154"
     client=Client(serverIp=ianIp,port=5000)
+=======
+    client=Client(port=5000)
+>>>>>>> 63987aed9a5996fa6c55d00c9260a82963513361
     client.startStream()
     
 

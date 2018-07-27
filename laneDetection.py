@@ -6,6 +6,12 @@ import time
 
 def grayscale(img): return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
+def region_of_interest(img, vertices):
+    mask = np.zeros_like(img)
+    match_mask_color = 255
+    cv2.fillPoly(mask, np.int32([vertices]).astype("int32"), (255,255,255))
+    masked_image = cv2.bitwise_and(img, mask)
+    return masked_image
 
 def autoCanny(image, sigma=0.33):
     # compute the median of the single channel pixel intensities
@@ -53,7 +59,15 @@ def UnPerp(img):
     return cv2.warpPerspective(img,M)
     
 def process(color):
-    color = color[color.shape[0]//3:, :]
+    height = color.shape[0]
+    width = color.shape[1]
+    region_of_interest_vertices = [
+        (0, height),
+        (width / 2, height / 2),
+        (width, height),
+    ]
+    color = region_of_interest(color,region_of_interest_vertices)
+
     img = grayscale(color)
     img=cv2.GaussianBlur(img,(5,5),0)
     edges = autoCanny(img)
