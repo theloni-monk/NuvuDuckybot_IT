@@ -4,6 +4,7 @@ import io
 import cv2
 # zstd might work on other computers but only zstandard will work with mine
 import zstandard
+import atexit
 
 class Client:
 
@@ -13,6 +14,7 @@ class Client:
         self.s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.s.connect((self.ip, kwargs.get("port",444)))
         self.D=zstandard.ZstdDecompressor()
+        atexit.register(self.close)
 
     def recv(self, size=1024):
         data = bytearray()
@@ -38,6 +40,9 @@ class Client:
             cv2.imshow("feed",img)
             if cv2.waitKey(1) == 27:
                 break  # esc to quit
+    
+    def close(self):
+        self.s.close()
 
 if __name__=="__main__":
     client=Client()

@@ -29,7 +29,10 @@ def normVector(vect):
 def AngleToDiff(ang, rad = False):
     """converts from angle(0-360)(0=north) to a ratio for tank steering"""
     diff=0
-    if rad diff=math.tan(ang) else diff=math.tan(math.radians(ang))# convert to slope
+    if rad:
+        diff=math.tan(ang) 
+    else:
+        diff=math.tan(math.radians(ang))# convert to slope
     return diff
 
 class Driver:
