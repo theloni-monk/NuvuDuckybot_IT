@@ -17,6 +17,7 @@ class Client:
         atexit.register(self.close)
 
     def recv(self, size=1024):
+        print("recv() called")
         data = bytearray()
         while 1:
             buffer = self.s.recv(1024)
@@ -24,6 +25,7 @@ class Client:
             if len(buffer)==1024:
                 pass
             else:
+                print("recv() data ingested")
                 return data
         
     def startStream(self):
