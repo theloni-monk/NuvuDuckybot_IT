@@ -66,7 +66,7 @@ def process(color):
         (width / 2, height / 2),
         (width, height),
     ]
-    #color = region_of_interest(color,region_of_interest_vertices)
+    color = region_of_interest(color,region_of_interest_vertices)
 
     img = grayscale(color)
     img=cv2.GaussianBlur(img,(5,5),0)
