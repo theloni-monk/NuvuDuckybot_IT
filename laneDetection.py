@@ -53,7 +53,7 @@ def UnPerp(img):
     return cv2.warpPerspective(img,M)
     
 def process(color):
-    #color = color[color.shape[0]//2:, :]
+    color = color[color.shape[0]//3:, :]
     img = grayscale(color)
     img=cv2.GaussianBlur(img,(5,5),0)
     edges = autoCanny(img)
