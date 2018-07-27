@@ -26,6 +26,12 @@ def normVector(vect):
         Ovect[0],Ovect[1]=vect[0],vect[1]
     return Ovect
 
+def AngleToDiff(ang, rad = False):
+    """converts from angle(0-360)(0=north) to a ratio for tank steering"""
+    diff=0
+    diff=math.tan(ang) if rad else diff=math.tan(math.radians(ang))# convert to slope
+    return diff
+
 class Driver:
     def __init__(self, **kwargs):
         # create a default MotorHAT object, no changes to I2C address or frequency
@@ -37,16 +43,18 @@ class Driver:
                 kwargs.get("deviceName", "Logitech Gamepad F710"))
         atexit.register(self.turnOffMotors)
 
-    def runMotor(self, motor, speed, bias=0):
+    def runMotor(self, motor, speed, bias=0, Snormed=False):
         """ motor - the motor object to control.
             speed - a number from -32768 (reverse) to 32768 (forward) """
         #print(speed)
+        if Snormed:
+            speed/=32768
         if speed>0:
             motor.run(Adafruit_MotorHAT.FORWARD)
         else:
             motor.run(Adafruit_MotorHAT.BACKWARD)
 
-        if motor==self.lmotor:
+        if motor==self.rmotor:
             speed-=bias
         if 1 <= speed <= 32767:       
             motor.setSpeed(int(speed*(255.0/32768.0)))
@@ -60,9 +68,6 @@ class Driver:
         elif speed < -32768:
             motor.setSpeed(255)
 
-    def runMotorNorm(self, motor, speed):
-        return self.runMotor(motor, speed/32768)
-
     def runDebug(self, b):
         self.runMotor(self.lmotor, 32767,b)
         self.runMotor(self.rmotor, 32767,b)
@@ -75,6 +80,9 @@ class Driver:
         print(vectO)
         self.runMotor(self.lmotor, vectO[0])
         self.runMotor(self.rmotor, vectO[1])
+
+    def runAngle(self, ang, speed=32767, rad=True, Snormed=False):
+        runDiff([1,1*AngleToDiff(ang,rad)],speed,Snormed)
 
     def stop(self):
         self.runDiff([0,0],0)
@@ -131,7 +139,7 @@ class Driver:
                 else:
                     pass
 
-# recommended for auto-disabling motors on shutdown!
+    # Auto-disabls motors on shutdown!
     def turnOffMotors(self):
         self.mh.getMotor(1).run(Adafruit_MotorHAT.RELEASE)
         self.mh.getMotor(2).run(Adafruit_MotorHAT.RELEASE)
@@ -142,8 +150,9 @@ class Driver:
 
 if __name__ == "__main__":
     driver = Driver(enableController=True)
+    # for debuging diff tuning
     while(True):
         driver.stop()
         tune=int(raw_input("input tuning var"))
         driver.runDebug(tune)
-        time.sleep(5)
+        time.sleep(2)
