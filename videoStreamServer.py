@@ -2,7 +2,8 @@ import socket
 import cv2
 import camera
 import io
-import pickle
+import numpy as np
+from tempfile import TemporaryFile
 import zstandard
 
 s = socket.socket()
@@ -20,7 +21,9 @@ cam = camera.Camera()
 while True:
     b = io.BytesIO()
     img=cam.image
-    b.write(pickle.dumps(zstandard.ZstdCompressor().compress(img)))
+    Tfile=TemporaryFile()
+    np.save(Tfile,img)
+    b.write(zstandard.ZstdCompressor.compress(Tfile))
     conn.send(b.getvalue())
 
 s.close()
