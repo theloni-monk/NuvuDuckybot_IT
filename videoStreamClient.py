@@ -7,7 +7,7 @@ import zstd
 ip = "18.111.87.85"
 s = socket.socket()
 s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-s.connect((ip, 444))
+s.connect(("localhost", 444))
 
 def recv(size=1024):
     data = bytearray()
