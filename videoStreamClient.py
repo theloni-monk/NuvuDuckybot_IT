@@ -44,7 +44,8 @@ class Client:
                 img = np.load(io.BytesIO(self.D.decompress(r)))
             except Exception as e:
                 print(e)
-            cv2.imshow("feed",img)
+
+            cv2.imshow("feed",cv2.resize(img, (0,0), fx=3.0, fy=3.0))
             if cv2.waitKey(1) == 27:
                 break  # esc to quit
     
@@ -52,7 +53,7 @@ class Client:
         self.s.close()
 
 if __name__=="__main__":
-    client=Client(serverIp="10.189.81.154", port=5000)
+    client=Client(port=5000)
     client.startStream()
     
 
