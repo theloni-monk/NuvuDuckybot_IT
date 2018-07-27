@@ -18,13 +18,13 @@ class Server:
             self.conn, self.clientAddr = self.s.accept()
             if self.verbose:
                 print('Connected with ' + self.clientAddr[0] + ':' + str(self.clientAddr[1]))
-    def startStream(self,getFrame):
+    def startStream(self,getFrame,args=[]):
         #not sure if np.save compression is worth io overhead...
         Tfile=TemporaryFile()
         C=zstandard.ZstdCompressor()
         while True:
             #fetch the image
-            img=getFrame()
+            img=getFrame(*args)
             
             #use numpys built in save function to convert image to bytes
             np.save(Tfile,img)
@@ -34,3 +34,8 @@ class Server:
     def close(self):
         self.s.close()
     
+if __name__ == "__main__":
+    cam = camera.Camera()
+    server = Server()
+    server.serve()
+    server.startStream(lambda:cam.image)
