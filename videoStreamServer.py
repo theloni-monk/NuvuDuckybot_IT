@@ -25,12 +25,12 @@ class Server:
         while True:
             #fetch the image
             img=getFrame(*args)
-            
             #use numpys built in save function to convert image to bytes
             np.save(Tfile,img)
             #compress it into even less bytes
             b = io.BytesIO(C.compress(Tfile.read(Tfile.tell()).encode()))
-            #send it            self.conn.send(b.getvalue())
+            #send it            
+            self.conn.send(b.getvalue())
     def close(self):
         self.s.close()
     
