@@ -10,8 +10,10 @@ import atexit
 class Server:
     def __init__(self,**kwargs):
         s = socket.socket()
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         s.bind(('', kwargs.get("port",444)))
         s.listen(10)
+        #print("Ready")
         self.s = s
         self.verbose = kwargs.get("verbose",True)
         atexit.register(self.close)
@@ -20,23 +22,28 @@ class Server:
         while True:
             self.conn, self.clientAddr = self.s.accept()
             if self.verbose:
-                print('Connected with ' + self.clientAddr[0] + ':' + str(self.clientAddr[1]))
-
+                #print('Connected with ' + self.clientAddr[0] + ':' + str(self.clientAddr[1]))
+                return
     def startStream(self,getFrame,args=[]):
         #not sure if np.save compression is worth io overhead...
-        Tfile=TemporaryFile()
+        
         C=zstandard.ZstdCompressor()
+        #print("Starting stream...")
         while True:
+            Tfile=io.BytesIO()
             #fetch the image
+            #print ("Fetching frame...")
             img=getFrame(*args)
+            #print ("Saving array to tfile...")
             #use numpys built in save function to convert image to bytes
             np.save(Tfile,img)
+            #print ("Compressing...")
             #compress it into even less bytes
-            b = io.BytesIO(C.compress(Tfile.read(Tfile.tell()).encode()))
+            b = C.compress(Tfile.getvalue())
             #send it            
-            print("sending...")
-            lend=self.conn.send(b.getvalue())
-            print("Sent {}KB".format(int(lend/1000)))
+            #print("sending...")
+            lend=self.conn.send(b)
+            #print("Sent {}KB".format(int(lend/1000)))
 
     def close(self):
         self.s.close()

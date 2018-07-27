@@ -29,6 +29,7 @@ class Client:
                 return data
         
     def startStream(self):
+        img = np.zeros((3,3))
         while True:
             print("Reading...")
             r = self.recv()
@@ -38,7 +39,10 @@ class Client:
             print("Done reading...")
 
             #load decompressed image
-            img = np.load(self.D.decompress(r).decode())
+            try:
+                img = np.load(io.BytesIO(self.D.decompress(r)))
+            except Exception as e:
+                print(e)
             cv2.imshow("feed",img)
             if cv2.waitKey(1) == 27:
                 break  # esc to quit
