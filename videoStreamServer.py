@@ -26,7 +26,7 @@ while True:
     #use numpys built in save function to convert image to bytes
     np.save(Tfile,img)
     #compress it into even less bytes
-    b.write(zstandard.ZstdCompressor.compress(Tfile.read(Tfile.tell())))
+    b.write(zstandard.ZstdCompressor.compress(bytearray(Tfile.read(Tfile.tell()))))
     conn.send(b.getvalue())
 
 s.close()
