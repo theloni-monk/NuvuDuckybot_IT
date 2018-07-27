@@ -53,18 +53,17 @@ def UnPerp(img):
     return cv2.warpPerspective(img,M)
     
 def process(color):
-    #color = color[color.shape[0]//2:, :]
+    color = color[color.shape[0]//3:, :]
     img = grayscale(color)
-    kernel = np.ones((5, 5), np.float32)/25
-    img = cv2.filter2D(img, -1, kernel)
+    img=cv2.GaussianBlur(img,(5,5),0)
     edges = autoCanny(img)
     output = color #np.zeros(color.shape)  # edges.reshape([edges.shape[0],edges.shape[1],1])
 
     lines = cv2.HoughLines(edges, 1, np.pi/180, 80)
     if lines is None:
         return output
-    for line in lines[:10]:
-        for rho, theta in line:
+    for line in lines:
+        for rho, theta in line[:10]:
             a = np.cos(theta)
             b = np.sin(theta)
             x0 = a*rho
