@@ -58,7 +58,7 @@ class Server:
         self.s.close()
 
 def retrieveImage(cam):
-    image = cam.imageNoDistort
+    image = cam.image
     image = laneDetection.process(image)
     return image
 
