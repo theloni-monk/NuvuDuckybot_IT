@@ -73,6 +73,7 @@ def process(color):
     edges = autoCanny(img)
     output = color #np.zeros(color.shape)  # edges.reshape([edges.shape[0],edges.shape[1],1])
 
+    lines = cv2.HoughLines(edges, 1, np.pi/180, 200)
     if lines is None:
         return output
     for line in lines:
@@ -97,7 +98,6 @@ def process(color):
             #print(lineColor)
             cv2.circle(output, (int(x0), int(y0)), 4, (255, 0, 0), -1)
     return output
-
 
 if __name__ == "__main__":
     cam = Camera(mirror=True)

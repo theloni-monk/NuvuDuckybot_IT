@@ -11,11 +11,8 @@ class Client:
 
     def __init__(self, **kwargs):
         self.ip = kwargs.get("serverIp","18.111.87.85")
-<<<<<<< HEAD
         self.res= kwargs.get("rez",(1920,1080))
         self.iRes=(1280,720)
-=======
->>>>>>> 5f779c126cc05bd4c09edd0d3f7e2623368699cf
         self.s = socket.socket()
         self.s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.s.connect((self.ip, kwargs.get("port",444)))
@@ -66,13 +63,9 @@ class Client:
         self.s.close()
 
 if __name__=="__main__":
-<<<<<<< HEAD
     ianIp="10.189.81.154"
     rasPiIp="18.111.87.85"
     client=Client(serverIp=rasPiIp,port=5000)
-=======
-    client=Client(port=5000)
->>>>>>> 5f779c126cc05bd4c09edd0d3f7e2623368699cf
     client.startStream()
     
 
