@@ -15,7 +15,6 @@ class Server:
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         s.bind(('', kwargs.get("port",444)))
         s.listen(10)
-        #print("Ready")
         self.s = s
         self.verbose = kwargs.get("verbose",True)
         atexit.register(self.close)
@@ -26,6 +25,7 @@ class Server:
             if self.verbose:
                 #print('Connected with ' + self.clientAddr[0] + ':' + str(self.clientAddr[1]))
                 return
+                
     def startStream(self,getFrame,args=[]):
         #send initial frame
         Sfile=io.BytesIO()
@@ -53,13 +53,14 @@ class Server:
     def close(self):
         self.s.close()
 
-def retrieveImage(cam):
+def retrieveImage(cam,imgResize):
     image = cv2.resize(cam.image,(0,0),fx=0.5,fy=0.5)
     #image = laneDetection.process(image)
     return image
 
 if __name__ == "__main__":
     cam = camera.Camera(mirror=True)
+    resize_cof=0.5 # 480p
     server = Server(port=5000)
     server.serve()
-    server.startStream(retrieveImage,[cam])
+    server.startStream(retrieveImage,[cam,resize_cof])

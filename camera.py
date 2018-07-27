@@ -25,6 +25,8 @@ class Camera:
             self.output = img
 
         return img
+        
+    #this still neds to be trained
     @property
     def imageNoDistort(self):
         img = self.image
