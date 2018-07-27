@@ -3,6 +3,7 @@ import cv2
 import camera
 import io
 import pickle
+import zstandard as zstd
 
 s = socket.socket()
 s.bind(('', 444))
@@ -17,7 +18,7 @@ while True:
 cam = camera.Camera()
 
 while True:
-    b = io.BytesIO()
+    b = zstd.ZstdCompressor()
     img = pickle.dump(cam.image,b)
     conn.send(b.getvalue())
 

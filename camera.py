@@ -30,4 +30,4 @@ class Camera:
 
 if __name__ == "__main__":
     cam = Camera(mirror=True)
-    cv2.imwrite("test/test_image.png", cam.image
+    cv2.imwrite("test/test_image.png", cam.image)
