@@ -43,6 +43,6 @@ class Server:
     
 if __name__ == "__main__":
     cam = camera.Camera()
-    server = Server("port"=5000)
+    server = Server(port=5000)
     server.serve()
     server.startStream(lambda:cam.image)
