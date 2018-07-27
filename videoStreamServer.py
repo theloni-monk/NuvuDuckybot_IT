@@ -54,4 +54,4 @@ if __name__ == "__main__":
     cam = camera.Camera()
     server = Server(port=5000)
     server.serve()
-    server.startStream(lambda:cam.image)
+    server.startStream(lambda:cv2.resize(cam.image, (0,0), fx=0.5, fy=0.5))
