@@ -73,7 +73,6 @@ def process(color):
         (width//2 + HhorizonOffset, height//2+horizonOffset),
         (width, height),
     ]
-    #print(region_of_interest_vertices)
 
     cropped = region_of_interest(color, np.array(
         [region_of_interest_vertices], np.int32))
@@ -81,7 +80,7 @@ def process(color):
     img = grayscale(cropped)
     img = cv2.GaussianBlur(img, (5, 5), 0)
     edges = autoCanny(img)
-    # np.zeros(color.shape)  # edges.reshape([edges.shape[0],edges.shape[1],1])
+    # np.zeros(color.shape) 
     output = color
 
     lines = cv2.HoughLines(edges, 1, np.pi/180, 250)
