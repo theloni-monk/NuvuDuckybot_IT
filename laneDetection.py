@@ -9,7 +9,7 @@ def grayscale(img): return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 def region_of_interest(img, vertices):
     mask = np.zeros_like(img)
     match_mask_color = 255
-    cv2.fillPoly(mask, vertices, match_mask_color)
+    cv2.fillPoly(mask, vertices.astype("int32"), (255,255,255))
     masked_image = cv2.bitwise_and(img, mask)
     return masked_image
 
