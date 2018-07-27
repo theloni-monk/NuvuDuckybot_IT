@@ -22,7 +22,6 @@ class Camera:
             ret_val, img = self.cam.read()
             if self.mirror:
                 img = cv2.flip(img, 1)
-
             self.output = img
 
         return img
