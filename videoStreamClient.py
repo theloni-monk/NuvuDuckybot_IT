@@ -20,7 +20,7 @@ class Client:
         atexit.register(self.close)
 
     def recv(self, size=1024):
-        print("recv() called")
+        #print("recv() called")
         data = bytearray()
         while 1:
             buffer = self.s.recv(1024)
@@ -28,7 +28,7 @@ class Client:
             if len(buffer)==1024:
                 pass
             else:
-                print("recv() data ingested")
+                #print("recv() data ingested")
                 return data
         
     def startStream(self):
@@ -37,12 +37,12 @@ class Client:
         prevFrame = np.load(io.BytesIO(self.D.decompress(recv_msg(self.s))))
 
         while True:
-            print("Reading...")
+            #print("Reading...")
             r = recv_msg(self.s)
             if len(r) == 0:
                 continue
-            print("Read {}KB".format(int(len(r)/1000)))
-            print("Done reading...")
+            #print("Read {}KB".format(int(len(r)/1000)))
+            #print("Done reading...")
 
             #load decompressed image
             try:
