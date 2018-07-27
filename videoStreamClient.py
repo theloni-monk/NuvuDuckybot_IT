@@ -55,7 +55,7 @@ class Client:
             prevFrame=img
 
             #show it scaled up 
-            cv2.imshow("feed",cv2.resize(img, (0,0), fx=1.0, fy=1.0))
+            cv2.imshow("feed",cv2.resize(img, (0,0), fx=3.0, fy=3.0))
             if cv2.waitKey(1) == 27:
                 break  # esc to quit
     
