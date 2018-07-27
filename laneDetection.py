@@ -99,7 +99,6 @@ def process(color):
             cv2.circle(output, (int(x0), int(y0)), 4, (255, 0, 0), -1)
     return output
 
-
 if __name__ == "__main__":
     cam = Camera(mirror=True)
     while 1:
