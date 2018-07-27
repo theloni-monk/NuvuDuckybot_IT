@@ -27,7 +27,7 @@ while 1:
         continue
     print("Read {}KB".format(int(len(r)/1000)))
     
-    b = zstd.decompress(r)
+    b = zstd.ZstdDecompressor().decompress(r)
     
     print("Done reading...")
     img = pickle.load(b)
