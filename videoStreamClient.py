@@ -8,10 +8,10 @@ import zstandard
 class Client:
 
     def __init__(self, **kwargs):
-        self.ip = kwargs.get("ServerIp","18.111.87.85")
+        self.ip = kwargs.get("serverIp","18.111.87.85")
         self.s = socket.socket()
         self.s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.s.connect((ip, 444))
+        self.s.connect((ip, kwargs.get("port",444)))
         self.D=zstandard.ZstdDecompressor()
 
     def recv(self, size=1024):

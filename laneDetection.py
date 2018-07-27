@@ -17,7 +17,12 @@ def autoCanny(image, sigma=0.33):
     # return the edged image
     return edged
 
-
+def unzero(x):
+    if x==0:
+        x = 0.001
+    return x
+def getLineColor(img,m,b):
+    
 def process(color):
     color = color[color.shape[0]//2:,:]
     img = grayscale(color)
@@ -40,18 +45,11 @@ def process(color):
             x2 = int(x0 - 1000*(-b))
             y2 = int(y0 - 1000*(a))
         
-            # m = (y2-y1)/((x2-x1))
-            # b = y1-m*x1
+            m = (y2-y1)/(unzero(x2-x1))
+            b = y1-m*x1
 
             cv2.line(output,(x1,y1),(x2,y2),(0,255,0),2)
             cv2.circle(output,(int(x0),int(y0)),4,(255,0,0),-1)
-    # minLineLength = 10
-    # maxLineGap = 20
-    # lines = cv2.HoughLinesP(edges,1,np.pi/180,100,minLineLength,maxLineGap)
-    # if lines is None:return output
-    # for x in range(0, len(lines)):
-    #     for x1,y1,x2,y2 in lines[x]:
-    #         cv2.line(output,(x1,y1),(x2,y2),(0,255,0),2)
     return output
 
 if __name__ == "__main__":
