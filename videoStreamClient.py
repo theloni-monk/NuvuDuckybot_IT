@@ -5,6 +5,7 @@ import cv2
 # zstd might work on other computers but only zstandard will work with mine
 import zstandard
 import atexit
+from netutils import *
 
 class Client:
 
@@ -32,7 +33,7 @@ class Client:
         img = np.zeros((3,3))
         while True:
             print("Reading...")
-            r = self.recv()
+            r = recv_msg(self.s)
             if len(r) == 0:
                 continue
             print("Read {}KB".format(int(len(r)/1000)))
@@ -51,7 +52,7 @@ class Client:
         self.s.close()
 
 if __name__=="__main__":
-    client=Client(port=5000)
+    client=Client(serverIp="10.189.81.154", port=5000)
     client.startStream()
     
 

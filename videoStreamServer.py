@@ -6,6 +6,7 @@ import numpy as np
 from tempfile import TemporaryFile
 import zstandard
 import atexit
+from netutils import *
 
 class Server:
     def __init__(self,**kwargs):
@@ -42,7 +43,8 @@ class Server:
             b = C.compress(Tfile.getvalue())
             #send it            
             #print("sending...")
-            lend=self.conn.send(b)
+            #lend=self.conn.sendall(b)
+            send_msg(self.conn,b)
             #print("Sent {}KB".format(int(lend/1000)))
 
     def close(self):
