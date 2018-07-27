@@ -55,11 +55,11 @@ def UnPerp(img):
 def process(color):
     color = color[color.shape[0]//2:, :]
     img = grayscale(color)
-    img=cv2.GaussianBlur(img,(7,7),0)
+    img=cv2.GaussianBlur(img,(5,5),0)
     edges = autoCanny(img)
     output = color #np.zeros(color.shape)  # edges.reshape([edges.shape[0],edges.shape[1],1])
 
-    lines = cv2.HoughLines(edges, 1, np.pi/180, 120)
+    lines = cv2.HoughLines(edges, 1, np.pi/180, 80)
     if lines is None:
         return output
     for line in lines:
