@@ -28,9 +28,9 @@ while True:
         continue
     print("Read {}KB".format(int(len(r)/1000)))
     print("Done reading...")
-    
+
     #load decompressed image
-    img = np.load(D.decompress(r))
+    img = np.load(D.decompress(r).decode())
     cv2.imshow("feed",img)
     if cv2.waitKey(1) == 27:
         break  # esc to quit
