@@ -18,15 +18,19 @@ while True:
 
 cam = camera.Camera()
 
+
+#not sure if np.save compression is worth io overhead...
+Tfile=TemporaryFile()
+C=zstandard.ZstdCompressor()
 while True:
-    
+    #fetch the image
     img=cam.image
-    #not sure if np.save compression is worth io overhead...
-    Tfile=TemporaryFile()
+    
     #use numpys built in save function to convert image to bytes
     np.save(Tfile,img)
     #compress it into even less bytes
-    b = io.BytesIO(zstandard.ZstdCompressor.compress((Tfile.read(Tfile.tell())).encode()))
+    b = io.BytesIO(C.compress(Tfile.read(Tfile.tell()).encode()))
+    #send it
     conn.send(b.getvalue())
 
 s.close()

@@ -20,17 +20,17 @@ def recv(size=1024):
         else:
             return data
         
-
-while 1:
+D=zstandard.ZstdDecompressor()
+while True:
     print("Reading...")
     r = recv()
     if len(r) == 0:
         continue
     print("Read {}KB".format(int(len(r)/1000)))
-    
     print("Done reading...")
-    #hopefully this works
-    img = np.load(zstandard.ZstdDecompressor().decompress(r))
+    
+    #load decompressed image
+    img = np.load(D.decompress(r))
     cv2.imshow("feed",img)
     if cv2.waitKey(1) == 27:
         break  # esc to quit
