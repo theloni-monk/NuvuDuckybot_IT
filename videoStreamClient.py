@@ -61,7 +61,7 @@ class Client:
         self.s.close()
 
 if __name__=="__main__":
-    client=Client(serverIp="localhost",port=5000)
+    client=Client(port=5000)
     client.startStream()
     
 
