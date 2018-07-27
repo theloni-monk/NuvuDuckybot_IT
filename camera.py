@@ -18,14 +18,16 @@ class Camera:
 
     @property
     def image(self):
-        #what was ret_val for?
-        ret_val, img = self.cam.read()
-        if self.mirror:
-            img = cv2.flip(img, 1)
-        self.output = img
+        if not self.paused:
+            ret_val, img = self.cam.read()
+            if self.mirror:
+                img = cv2.flip(img, 1)
+
+            self.output = img
+
         return img
 
 
 if __name__ == "__main__":
     cam = Camera(mirror=True)
-    cv2.imwrite("test/test_image.png", cam.image())
+    cv2.imwrite("test/test_image.png", cam.image
