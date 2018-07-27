@@ -2,7 +2,7 @@ import socket
 import pickle
 import io
 import cv2
-import zstandard as zstd
+import zstd
 
 ip = "18.111.87.85"
 s = socket.socket()
@@ -26,7 +26,7 @@ while 1:
     if len(r) == 0:
         continue
     print("Read {}KB".format(int(len(r)/1000)))
-    b = zstd.ZstdDecompressor().decompress(r)
+    b = zstd.decompress(r)
     
     print("Done reading...")
     img = pickle.load(b)
