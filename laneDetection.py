@@ -1,5 +1,5 @@
 import cv2
-from camera import Camera
+from ../camera import Camera
 import numpy as np
 import time
 

@@ -1,5 +1,5 @@
 import cv2
-from camera import Camera
+from ..camera import Camera
 import numpy as np
 import time
 
@@ -22,7 +22,7 @@ def process(img):
     #mask = cv2.inRange(img, lower, upper)
     #img = cv2.
     #img = cv2.cvtColor(img.astype('uint8'), cv2.COLOR_BGR2GRAY)/255
-    img = img<0.1
+    img = img<0.2
     
     return img.astype("float")
 
