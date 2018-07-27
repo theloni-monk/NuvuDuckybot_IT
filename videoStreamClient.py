@@ -31,7 +31,9 @@ class Client:
         
     def startStream(self):
         img = np.zeros((3,3))
+        #initial
         prevFrame = np.load(io.BytesIO(self.D.decompress(recv_msg(self.s))))
+
         while True:
             print("Reading...")
             r = recv_msg(self.s)
@@ -42,8 +44,9 @@ class Client:
 
             #load decompressed image
             try:
-                # we are reciveing a diff so we use a logical and to recover the frame
-                img = np.logical_and(np.load(io.BytesIO(self.D.decompress(r))),prevFrame)
+                # diff+prevframe
+                img = (np.load(io.BytesIO(self.D.decompress(r)))+prevFrame).astype("uint8")
+        
             except Exception as e:
                 print(e)
 
@@ -58,7 +61,7 @@ class Client:
         self.s.close()
 
 if __name__=="__main__":
-    client=Client(port=5000)
+    client=Client(serverIp="localhost",port=5000)
     client.startStream()
     
 

@@ -42,7 +42,7 @@ class Server:
 
             #use numpys built in save function to diff with prevframe
             #because we diff it it will compress more
-            np.save(Tfile,np.diff(img,prevFrame))
+            np.save(Tfile, img-prevFrame)
 
             #compress it into even less bytes
             b = C.compress(Tfile.getvalue())
@@ -62,6 +62,7 @@ def retrieveImage(cam):
     image = laneDetection.process(image)
     image = cv2.resize(image, (0,0), fx=0.5, fy=0.5)
     return image
+
 if __name__ == "__main__":
     cam = camera.Camera(mirror=True)
     server = Server(port=5000)
