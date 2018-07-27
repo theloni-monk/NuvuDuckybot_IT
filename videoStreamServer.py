@@ -39,17 +39,13 @@ class Server:
             #fetch the image
             #print ("Fetching frame...")
             img=getFrame(*args)
-
             #use numpys built in save function to diff with prevframe
             #because we diff it it will compress more
             np.save(Tfile, img-prevFrame)
-
             #compress it into even less bytes
             b = C.compress(Tfile.getvalue())
-
             #reassing prev frame
             prevFrame=img
-
             #send it            
             send_msg(self.conn,b)
             #print("Sent {}KB".format(int(lend/1000)))
