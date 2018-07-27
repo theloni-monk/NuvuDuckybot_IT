@@ -27,10 +27,8 @@ while 1:
         continue
     print("Read {}KB".format(int(len(r)/1000)))
     
-    b = zstd.decompress(r)
-    
     print("Done reading...")
-    img = pickle.load(b)
+    img = zstd.decompress(pickle.load(r))
     cv2.imshow("feed",img)
     if cv2.waitKey(1) == 27:
         break  # esc to quit
