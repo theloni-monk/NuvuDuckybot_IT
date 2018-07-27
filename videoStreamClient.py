@@ -11,7 +11,7 @@ class Client:
         self.ip = kwargs.get("serverIp","18.111.87.85")
         self.s = socket.socket()
         self.s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.s.connect((ip, kwargs.get("port",444)))
+        self.s.connect((self.ip, kwargs.get("port",444)))
         self.D=zstandard.ZstdDecompressor()
 
     def recv(self, size=1024):
@@ -27,7 +27,7 @@ class Client:
     def startStream(self):
         while True:
             print("Reading...")
-            r = recv()
+            r = self.recv()
             if len(r) == 0:
                 continue
             print("Read {}KB".format(int(len(r)/1000)))

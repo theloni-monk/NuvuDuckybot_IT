@@ -31,6 +31,7 @@ class Server:
             b = io.BytesIO(C.compress(Tfile.read(Tfile.tell()).encode()))
             #send it            
             self.conn.send(b.getvalue())
+            print("Sent {}KB".format(int(len(r)/1000)))
     def close(self):
         self.s.close()
     
