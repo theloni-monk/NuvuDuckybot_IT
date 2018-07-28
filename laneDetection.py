@@ -30,7 +30,7 @@ def autoCanny(image, sigma=0.33):
 
 def unzero(x):
     if x == 0:
-        x = 0.001
+        x = 0.0001
     return x
 
 
@@ -67,6 +67,7 @@ def process(color):
     width = color.shape[1]
     horizonOffset = -100
     HhorizonOffset = 100
+
     region_of_interest_vertices = [
         (0, height),
         (width//2 - HhorizonOffset, height//2+horizonOffset),
@@ -74,8 +75,7 @@ def process(color):
         (width, height),
     ]
 
-    cropped = region_of_interest(color, np.array(
-        [region_of_interest_vertices], np.int32))
+    cropped = region_of_interest(color, np.array([region_of_interest_vertices], np.int32))
 
     img = grayscale(cropped)
     img = cv2.GaussianBlur(img, (5, 5), 0)
