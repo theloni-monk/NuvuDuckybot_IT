@@ -23,8 +23,8 @@ def process(img):
     #mask = cv2.inRange(img, lower, upper)
     #img = cv2.
     #img = cv2.cvtColor(img.astype('uint8'), cv2.COLOR_BGR2GRAY)/255
-    lines = cv2.HoughLinesP(processed_img, 1, np.pi/180, 180, 20, 15)
-    draw_lines(edges,lines)
+    lines = cv2.HoughLinesP(imgg, 1, np.pi/180, 180, 20, 15)
+    
     
     return edges
 
