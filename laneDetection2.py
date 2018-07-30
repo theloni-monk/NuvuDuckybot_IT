@@ -12,7 +12,7 @@ class Profile:
     }
 
 def calibrate(img,profile,**kwargs):
-    K = kwargs.get("K",5)
+    K = kwargs.get("K",3)
     blurSize = kwargs.get("blurSize",(5,5))
     w = img.shape[1]
     h = img.shape[0]
@@ -26,10 +26,11 @@ def calibrate(img,profile,**kwargs):
     criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10, 1.0)
     ret,label,center=cv2.kmeans(Z,K,None,criteria,10,cv2.KMEANS_RANDOM_CENTERS)
     
-    
+    chsv = np.array([colorsys.rgb_to_hsv(*(c/255)) for c in center])
+
     for name in profile:
-        color = profile[name]
-        losses = np.abs(center-np.array(color)).mean(axis=1)
+        color = np.array(colorsys.rgb_to_hsv(*np.array(profile[name])/255))
+        losses = np.abs(chsv-color).mean(axis=1)
         n = np.argmin(losses)
         newProfile[name] = center[n]
 
