@@ -1,21 +1,13 @@
-import laneDetection
-import laneDetection2
-import rpistream
-
-
-
-
-
-
+from laneDetection2 import *
+from rpistream import *
 
 def makeImg(cam, detectFunc, scale, args):
     image = cv2.resize(cam.image,(0,0),fx=scale,fy=scale)
     return detectFunc(image)
 
-
-Ld=laneDetector() #needs more params
-cam=rpistream.camera.Camera()
+Ld= LaneDetector() #needs more params
+cam=camera.Camera()
 scale=1
-server = rpistream.streamserver.Server(port=5000)
+server = streamserver.Server(port=5000)
 server.serve() # Blocking; waits for a connection before continuing
-server.startStream(makeImg,[cam,makeImg,scale]) # Calls retrieveImage(*args) every frame  
+server.startStream(makeImg,[cam, Ld.process, scale]) # Calls retrieveImage(*args) every frame  
