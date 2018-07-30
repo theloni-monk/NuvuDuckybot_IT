@@ -1,32 +1,52 @@
 import cv2
-from camera import Camera
+from rpistream.camera import Camera
 import numpy as np
 import time
 
+def calibrate(img,profile,**kwargs):
+    K = kwargs.get("K",5)
+    blurSize = kwargs.get("blurSize",(5,5))
+    w = img.shape[1]
+    h = img.shape[0]
+    img=cv2.GaussianBlur(img,blurSize,0)
+    Z = img.reshape((-1,3))
+
+    # convert to np.float32
+    Z = np.float32(Z)
+    newProfile = {}
+    # define criteria, number of clusters(K) and apply kmeans()
+    criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10, 1.0)
+    ret,label,center=cv2.kmeans(Z,K,None,criteria,10,cv2.KMEANS_RANDOM_CENTERS)
+
+    for name in profile:
+        color = profile[name]
+        losses = np.abs(center-np.array(color)).mean(axis=1)
+        n = np.argmin(losses)
+        newProfile[name] = center[n]
+        
+    return newProfile
 def process(img):
     w = img.shape[1]
     h = img.shape[0]
     img=cv2.GaussianBlur(img,(5,5),0)
-    hsv = (cv2.cvtColor(img, cv2.COLOR_BGR2HSV)/255).astype("float")
-    
-    # hues = img.copy()
-    # hues[:,:,1:] = 0
-    # hues = np.sum(hues,2)
-    # vals = img.copy()
-    # vals[:,:,0] = 0
-    # vals[:,:,1] = 0
-    # vals = np.sum(vals,2)
-    img=hsv-np.array([40/255,1,0.8])
-    #img = np.abs(hues-1/38) + np.vals
-    img = ((np.mean(np.abs(img),axis=2)<0.3)).astype("float")
-    edges = cv2.Canny((img*255).astype("uint8"), threshold1=200, threshold2=300)
-    #mask = cv2.inRange(img, lower, upper)
-    #img = cv2.
-    #img = cv2.cvtColor(img.astype('uint8'), cv2.COLOR_BGR2GRAY)/255
-    #lines = cv2.HoughLinesP(img, 1, np.pi/180, 180, 20, 15)
-    
-    
-    return hsv[:,:,2]
+    Z = img.reshape((-1,3))
+
+    # convert to np.float32
+    Z = np.float32(Z)
+
+    # define criteria, number of clusters(K) and apply kmeans()
+    criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10, 1.0)
+    K = 5
+    ret,label,center=cv2.kmeans(Z,K,None,criteria,10,cv2.KMEANS_RANDOM_CENTERS)
+    print("RET: ",ret)
+    print("LBL: ",label.shape)
+    print("CTR: ",center)
+    # Now convert back into uint8, and make original image
+    center = np.uint8(center)
+    res = center[label.flatten()]
+    res2 = res.reshape((img.shape))
+    return res2
+
 
 if __name__ == "__main__":
     cam = Camera(mirror=True)
