@@ -50,17 +50,17 @@ class LaneDetector:
 
     def process(self,img):
         hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-        l = []
+        l = [] # Losses for grey, yellow, white channels
         for name in profile:
-            color = np.array(colorsys.rgb_to_hsv(*np.array(profile[name])))
-            losses = np.abs(hsv-color).mean(axis=2)
-            l.append(losses.reshape(img.shape[0],img.shape[1],1))
+            color = np.array(colorsys.rgb_to_hsv(*np.array(profile[name]))) # Color to HSV
+            losses = np.abs(hsv-color).mean(axis=2) # Find color diffs
+            l.append(losses.reshape(img.shape[0],img.shape[1],1)) # Add to losses
         print(np.mean(l[0]-l[1]))
-        l = np.concatenate((l[0],l[1],l[2]),axis=2)
+        l = np.concatenate((l[0],l[1],l[2]),axis=2) # Reshape losses into RGB channels
         print(l[0,1])
         #return normLayer(l)
-        l = np.argmin(l,2)
-        return (l==0).astype("float")
+        l = np.argmin(l,2) # Find the lowest loss-ing channel for each pixel
+        return (l==0).astype("float") # Find the pixels where channel 0 is the lowest loss
 
     def getCalibImage(self,cam,iters=10):
         img = None
