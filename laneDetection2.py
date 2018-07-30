@@ -14,6 +14,7 @@ class ColorProfile:
 class LaneDetector:
     def __init__(self, **kwargs):
         self.KmeansProfile = None
+        self.kLabels = None
         self.calibrated = False
         self.ctrs = None
     def calibrate(self, img, profile, **kwargs):
@@ -28,9 +29,10 @@ class LaneDetector:
         # convert to np.float32
         Z = np.float32(Z)
         KmeansProfile = {}
+
         # define criteria, number of clusters(K) and apply kmeans()
         criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10, 1.0)
-        ret,label,center=cv2.kmeans(Z,K,None,criteria,10,cv2.KMEANS_RANDOM_CENTERS)
+        ret,labels,center=cv2.kmeans(Z,K,None,criteria,10,cv2.KMEANS_RANDOM_CENTERS)
         
         chsv = np.array([colorsys.rgb_to_hsv(*(c/255)) for c in center])
 
@@ -41,6 +43,7 @@ class LaneDetector:
             KmeansProfile[name] = center[n]
 
         center = np.uint8(center)
+        self.kLabel=label
         res = center[label.flatten()]
         res2 = res.reshape((img.shape))
         self.KmeansProfile = KmeansProfile
@@ -48,6 +51,7 @@ class LaneDetector:
         self.ctrs = center
         if debug:
             return res2
+<<<<<<< HEAD
     def process3(self,img,profile,**kwargs):
         #img = cv2.resize(img,(0,0),fx=0.5,fy=0.5)
         K = kwargs.get("K",4)
@@ -56,6 +60,11 @@ class LaneDetector:
         w = img.shape[1]
         h = img.shape[0]
         img=cv2.GaussianBlur(img,blurSize,0)
+=======
+    
+    def process2(self,img):
+        img=cv2.GaussianBlur(img,(5,5),0)
+>>>>>>> 37acd2f10526c2bebe17db92939c2f70069f449f
         Z = img.reshape((-1,3))
 
         # convert to np.float32
@@ -63,6 +72,7 @@ class LaneDetector:
         KmeansProfile = {}
         # define criteria, number of clusters(K) and apply kmeans()
         criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10, 1.0)
+<<<<<<< HEAD
         ret,label,center=cv2.kmeans(Z,K,None,criteria,10,cv2.KMEANS_RANDOM_CENTERS)
         
         chsv = np.array([colorsys.rgb_to_hsv(*(c/255)) for c in center])
@@ -96,6 +106,10 @@ class LaneDetector:
         res = center[label.flatten()]
         res2 = res.reshape((img.shape))
         return res2
+=======
+        ret,label,center=cv2.kmeans(Z,K,self.kLabels,criteria,10,cv2.KMEANS_RANDOM_CENTERS)
+    
+>>>>>>> 37acd2f10526c2bebe17db92939c2f70069f449f
     def process(self,img):
         hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
         l = [] # Losses for grey, yellow, white channels
