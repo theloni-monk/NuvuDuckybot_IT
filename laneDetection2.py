@@ -43,8 +43,8 @@ class LaneDetector:
             KmeansProfile[name] = center[n]
 
         center = np.uint8(center)
-        self.kLabel=label
-        res = center[label.flatten()]
+        self.kLabels=labels
+        res = center[labels.flatten()]
         res2 = res.reshape((img.shape))
         self.KmeansProfile = KmeansProfile
         self.calibrated = True
@@ -91,6 +91,6 @@ if __name__ == "__main__":
     res=LD.calibrate(calibImg, profile, debug=True)
     print(LD.KmeansProfile)
     while 1:
-        cv2.imshow('my webcam', res)
+        cv2.imshow('my webcam', LD.process(cam.image))
         if cv2.waitKey(1) == 27:
             break  # esc to quit
