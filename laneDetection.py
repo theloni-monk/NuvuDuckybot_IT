@@ -63,24 +63,22 @@ def UnPerp(img, perpVerts):
 
 
 def process(color):
+   
     height = color.shape[0]
     width = color.shape[1]
     horizonOffset = -100
     HhorizonOffset = 100
-
     region_of_interest_vertices = [
         (0, height),
         (width//2 - HhorizonOffset, height//2+horizonOffset),
         (width//2 + HhorizonOffset, height//2+horizonOffset),
         (width, height),
     ]
-
     cropped = region_of_interest(color, np.array([region_of_interest_vertices], np.int32))
-
     img = grayscale(cropped)
     img = cv2.GaussianBlur(img, (5, 5), 0)
     edges = autoCanny(img)
-    # np.zeros(color.shape) 
+
     output = color
 
     lines = cv2.HoughLines(edges, 1, np.pi/180, 250)
