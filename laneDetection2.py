@@ -12,8 +12,8 @@ class ColorProfile:
     }
 class LaneDetector:
     def __init__(self, **kwargs):
-        pass
-
+        self.profile = None
+        self.calibrated = False
     def calibrate(self, img, profile, **kwargs):
         K = kwargs.get("K",3)
         blurSize = kwargs.get("blurSize",(5,5))
@@ -40,8 +40,8 @@ class LaneDetector:
         center = np.uint8(center)
         res = center[label.flatten()]
         res2 = res.reshape((img.shape))
-        return newProfile,res2
-
+        self.profile = newProfile
+        self.calibrated = True
     def process(self,img):
         return img
 
