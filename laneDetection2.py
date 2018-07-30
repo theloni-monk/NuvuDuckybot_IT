@@ -47,7 +47,16 @@ class LaneDetector:
         self.calibrated = True
         if debug:
             return res2
+    def process2(self,img):
+        img=cv2.GaussianBlur(img,(5,5),0)
+        Z = img.reshape((-1,3))
 
+        # convert to np.float32
+        Z = np.float32(Z)
+        KmeansProfile = {}
+        # define criteria, number of clusters(K) and apply kmeans()
+        criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10, 1.0)
+        ret,label,center=cv2.kmeans(Z,K,None,criteria,10,cv2.KMEANS_RANDOM_CENTERS)
     def process(self,img):
         hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
         l = [] # Losses for grey, yellow, white channels
