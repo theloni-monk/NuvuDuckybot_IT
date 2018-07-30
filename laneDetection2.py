@@ -55,6 +55,8 @@ class LaneDetector:
             color = np.array(colorsys.rgb_to_hsv(*np.array(profile[name])))
             losses = np.abs(hsv-color).mean(axis=2)
             l.append(losses.reshape(img.shape[0],img.shape[1],1))
+        
+
         print(np.mean(l[0]-l[1]))
         l = np.concatenate((l[0],l[1],l[2]),axis=2)
         print(l[0,1])
