@@ -46,19 +46,33 @@ class Driver:
                 kwargs.get("deviceName", "Logitech Gamepad F710"))
         atexit.register(self.turnOffMotors)
 
-    def runMotor(self, motor, speed, bias=0, Snormed=False):
+    def runMotor(self, motor, speed):
         """ motor - the motor object to control.
             speed - a number from -32768 (reverse) to 32768 (forward) """
         #print(speed)
+
+        isBias=kwargs.get("isBias",False)
+        bias=None
+        biasMotor=None
+        Snormed=kwargs.get("Snormed",False)
+        if(isBias):
+            bias=kwargs.get("bias",0)
+            biasMotor=kwargs.get("biasMotor","r")
+    
         if Snormed:
             speed/=32768
+
         if speed>0:
             motor.run(Adafruit_MotorHAT.FORWARD)
         else:
             motor.run(Adafruit_MotorHAT.BACKWARD)
 
-        if motor==self.rmotor:
-            speed-=bias
+        if isBias:
+            if(biasMotor='r'and motor=self.rmotor):
+                speed-=bias
+            elif(biasMotor='l' and motor = self.lmotor):
+
+
         if 1 <= speed <= 32767:       
             motor.setSpeed(int(speed*(255.0/32768.0)))
         elif speed > 32768:
@@ -72,8 +86,8 @@ class Driver:
             motor.setSpeed(255)
 
     def runDebug(self, b):
-        self.runMotor(self.lmotor, 32767,b)
-        self.runMotor(self.rmotor, 32767,b)
+        self.runMotor(self.lmotor, 32767, isBias=True, bias=b)
+        self.runMotor(self.rmotor, 32767, isBias=True, bias=b)
 
     def runDiff(self, diff, speed=32767, Snormed=False):
         if Snormed:
