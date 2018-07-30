@@ -3,23 +3,25 @@ from rpistream.camera import Camera
 import numpy as np
 import time
 import colorsys
+import sys
+
 def normLayer(l):
     return (l-np.min(l))/(np.max(l)-np.min(l))
 class ColorProfile:
     lanes = {
-        "yellow":(213,177,91),
+        "yellow":(213,177,50),
         "white":(255,255,255),
         "grey":(150,150,150)
     }
     
 class LaneDetector:
     def __init__(self, **kwargs):
-        self.KmeansProfile = None
+        self.kProfile = None
         self.kLabels = None
         self.calibrated = False
 
     def calibrate(self, img, profile, **kwargs):
-        K = kwargs.get("K",3)
+        K = kwargs.get("K",5)
         debug=kwargs.get("debug",False)
         blurSize = kwargs.get("blurSize",(5,5))
         w = img.shape[1]
@@ -29,25 +31,31 @@ class LaneDetector:
 
         # convert to np.float32
         Z = np.float32(Z)
-        KmeansProfile = {}
+        kProfile = {}
 
         # define criteria, number of clusters(K) and apply kmeans()
         criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10, 1.0)
-        ret,labels,center=cv2.kmeans(Z,K,criteria,10,0)
-        
-        chsv = np.array([colorsys.rgb_to_hsv(*(c/255)) for c in center])
+        ret,labels,center=None,None,None
+        if sys.version_info[0] == 3:
+            ret,labels,center=cv2.kmeans(Z,K,None,criteria,10,cv2.KMEANS_RANDOM_CENTERS)
+        else:
+            ret,labels,center=cv2.kmeans(Z,K,criteria,10)
 
-        for name in ColorProfile.lanes:
-            color = np.array(colorsys.rgb_to_hsv(*np.array(ColorProfile.lanes[name])/255))
-            losses = np.abs(chsv-color).mean(axis=1)
-            n = np.argmin(losses)
-            KmeansProfile[name] = center[n]
+        chsv = np.array([colorsys.rgb_to_hsv(*(c[::-1]/255)) for c in center]) # Center colors as HSV
+
+        for name in profile:
+            color = np.array(colorsys.rgb_to_hsv(*(np.array(profile[name])/255))) # Profile color as HSV
+            losses = np.abs(chsv-color).mean(axis=1) # Color diffs
+            n = np.argmin(losses) # Find closest center color to profile color
+
+            kProfile[name] = chsv[n]
+            print(name,chsv[n])
 
         center = np.uint8(center)
-        self.kLabels=labels
         res = center[labels.flatten()]
         res2 = res.reshape((img.shape))
-        self.KmeansProfile = KmeansProfile
+
+        self.kProfile = kProfile
         self.calibrated = True
         if debug:
             return res2
@@ -58,25 +66,21 @@ class LaneDetector:
 
         # convert to np.float32
         Z = np.float32(Z)
-        KmeansProfile = {}
+        kProfile = {}
         # define criteria, number of clusters(K) and apply kmeans()
         criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10, 1.0)
         ret,label,center=cv2.kmeans(Z,K,self.kLabels,criteria,10,cv2.KMEANS_RANDOM_CENTERS)
     
     def process(self,img):
-        hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+        hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)/255
         l = [] # Losses for grey, yellow, white channels
-        for name in profile:
-            print(name)
-            color = np.array(colorsys.rgb_to_hsv(*np.array(profile[name]))) # Color to HSV
-            losses = np.abs(hsv-color).mean(axis=2) # Find color diffs
+        for name in self.kProfile:
+            color = np.array(self.kProfile[name])
+            losses = np.power(hsv-color,2).mean(axis=2) # Find color diffs
             l.append(losses.reshape(img.shape[0],img.shape[1],1)) # Add to losses
-        print(np.mean(l[0]-l[1]))
         l = np.concatenate((l[0], l[1], l[2]),axis=2) # Reshape losses into RGB channels
-        print(l[0,1])
-        #return normLayer(l)
         l = np.argmin(l,2) # Find the lowest loss-ing channel for each pixel
-        return (l==0).astype("float") # Find the pixels where channel 0 is the lowest loss
+        return (l==1).astype("float") # Find the pixels where channel 0 is the lowest loss
 
     def getCalibImage(self,cam,iters=10):
         img = None
@@ -87,10 +91,10 @@ class LaneDetector:
 if __name__ == "__main__":
     cam = Camera(mirror=True)
     LD=LaneDetector()
-    profile=ColorProfile.lanes
+    p=ColorProfile.lanes
     calibImg = LD.getCalibImage(cam)
-    res=LD.calibrate(calibImg, profile, debug=True)
-    print(LD.KmeansProfile)
+    res=LD.calibrate(calibImg, p, debug=True)
+    #print(LD.kProfile)
     while 1:
         cv2.imshow('my webcam', LD.process(cam.image))
         if cv2.waitKey(1) == 27:
