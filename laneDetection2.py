@@ -76,6 +76,6 @@ if __name__ == "__main__":
     res=LD.calibrate(calibImg, profile, debug=True)
     print(LD.KmeansProfile)
     while 1:
-        cv2.imshow('my webcam', LD.process(cam.image))
+        cv2.imshow('my webcam', res)
         if cv2.waitKey(1) == 27:
             break  # esc to quit
