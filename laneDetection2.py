@@ -12,10 +12,12 @@ class ColorProfile:
     }
 class LaneDetector:
     def __init__(self, **kwargs):
-        self.profile = None
+        self.KmeansProfile = None
         self.calibrated = False
+
     def calibrate(self, img, profile, **kwargs):
         K = kwargs.get("K",3)
+        debug=kwargs.get("debug",False)
         blurSize = kwargs.get("blurSize",(5,5))
         w = img.shape[1]
         h = img.shape[0]
@@ -24,25 +26,29 @@ class LaneDetector:
 
         # convert to np.float32
         Z = np.float32(Z)
-        newProfile = {}
+        KmeansProfile = {}
         # define criteria, number of clusters(K) and apply kmeans()
         criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10, 1.0)
         ret,label,center=cv2.kmeans(Z,K,None,criteria,10,cv2.KMEANS_RANDOM_CENTERS)
         
         chsv = np.array([colorsys.rgb_to_hsv(*(c/255)) for c in center])
 
-        for name in profile:
-            color = np.array(colorsys.rgb_to_hsv(*np.array(profile[name])/255))
+        for name in ColorProfile.lanes:
+            color = np.array(colorsys.rgb_to_hsv(*np.array(ColorProfile.lanes[name])/255))
             losses = np.abs(chsv-color).mean(axis=1)
             n = np.argmin(losses)
-            newProfile[name] = center[n]
+            KmeansProfile[name] = center[n]
 
         center = np.uint8(center)
         res = center[label.flatten()]
         res2 = res.reshape((img.shape))
-        self.profile = newProfile
+        self.KmeansProfile = KmeansProfile
         self.calibrated = True
+        if debug:
+            return res2
+
     def process(self,img):
+
         return img
 
     def getCalibImage(self,cam,iters=10):
@@ -53,9 +59,11 @@ class LaneDetector:
 
 if __name__ == "__main__":
     cam = Camera(mirror=True)
-    calibImg = getCalibImage(cam)
-    profile,res = calibrate(calibImg,Profile.lanes)
-    print(profile)
+    LD=LaneDetector()
+    profile=ColorProfile()
+    calibImg = LD.getCalibImage(cam)
+    res=LD.calibrate(calibImg, profile, debug=True)
+    print(LD.KmeansProfile)
     while 1:
         cv2.imshow('my webcam', res)
         if cv2.waitKey(1) == 27:
