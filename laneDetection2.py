@@ -11,6 +11,7 @@ class ColorProfile:
         "white":(255,255,255),
         "grey":(150,150,150)
     }
+    
 class LaneDetector:
     def __init__(self, **kwargs):
         self.KmeansProfile = None
