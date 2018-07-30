@@ -39,7 +39,7 @@ class LaneDetector:
         if sys.version_info[0] == 3:
             ret,labels,center=cv2.kmeans(Z,K,None,criteria,10,cv2.KMEANS_RANDOM_CENTERS)
         else:
-            ret,labels,center=cv2.kmeans(Z,K,criteria,10)
+            ret,labels,center=cv2.kmeans(Z,K,criteria,10, cv2.KMEANS_RANDOM_CENTERS)
 
         chsv = np.array([colorsys.rgb_to_hsv(*(c[::-1]/255)) for c in center]) # Center colors as HSV
 
