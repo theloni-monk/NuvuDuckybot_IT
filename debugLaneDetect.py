@@ -8,6 +8,7 @@ def makeImg(cam, detectFunc, scale):
 Ld= LaneDetector() #needs more params
 cam=camera.Camera()
 scale=1
+Ld.calibrate()
 server = streamserver.Server(port=5000)
 server.serve() # Blocking; waits for a connection before continuing
 server.startStream(makeImg,[cam, Ld.calibrate, scale]) # Calls retrieveImage(*args) every frame  
