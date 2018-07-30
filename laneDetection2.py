@@ -33,7 +33,7 @@ class LaneDetector:
 
         # define criteria, number of clusters(K) and apply kmeans()
         criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10, 1.0)
-        ret,labels,center=cv2.kmeans(Z,K,None,criteria,10,0)
+        ret,labels,center=cv2.kmeans(Z,K,criteria,10,0)
         
         chsv = np.array([colorsys.rgb_to_hsv(*(c/255)) for c in center])
 
