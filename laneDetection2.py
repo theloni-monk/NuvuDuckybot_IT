@@ -92,7 +92,7 @@ class LaneDetector:
         for i in range(iters):
             img = cam.image
         return img
-
+    
     def calibrateKmeans(self, img, profile, **kwargs):
         #img=region_of_interest(img,getDefault(img.shape[0],img.shape[1]))
         img = unwarp2(img)
@@ -234,7 +234,7 @@ class LaneDetector:
         if self.verbose:
             print(m)  # printout if verbose
 
-
+    
 if __name__ == "__main__":
     cam = Camera(mirror=True)
     LD = LaneDetector()
