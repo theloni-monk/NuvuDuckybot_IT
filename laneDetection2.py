@@ -23,9 +23,9 @@ class ColorProfile:
 horizonOffset = -100
 HhorizonOffset = 100
 
-def getDefault(img):
-    height = img.shape[0]
-    width = img.shape[1]
+def getDefault(h,w):
+    height = h
+    width = w
     return [
         (0, height),
         (0,height-100),#(width//2 - HhorizonOffset, height//2+horizonOffset),
@@ -84,7 +84,7 @@ class LaneDetector:
         return img
 
     def calibrateKmeans(self, img, profile, **kwargs):
-        img=region_of_interest(getDefault())
+        img=region_of_interest(getDefault(img.shape[0],img.shape[1]))
         K = kwargs.get("K", 5)
         debug = kwargs.get("debug", False)
         blurSize = kwargs.get("blurSize", (5, 5))
@@ -157,10 +157,10 @@ class LaneDetector:
             return res2
 
     def process3(self, imgin):
-        #img = cv2.resize(img,(0,0),fx=0.5,fy=0.5)
+        
         shape = imgin.shape
         pixels = shape[0]*shape[1]
-        clipping = getDefault(imgin)
+        clipping = getDefault(imgin.shape[0], imgin.shape[1])
         colors = ["yellow", "white"]
 
         for currColor in colors:
