@@ -84,6 +84,7 @@ class LaneDetector:
         return img
 
     def calibrateKmeans(self, img, profile, **kwargs):
+
         K = kwargs.get("K", 5)
         debug = kwargs.get("debug", False)
         blurSize = kwargs.get("blurSize", (5, 5))
@@ -156,15 +157,15 @@ class LaneDetector:
             return res2
 
     def process3(self, imgin):
-        img = cv2.resize(imgin,(0,0),fx=0.5,fy=0.5)
+        #img = cv2.resize(img,(0,0),fx=0.5,fy=0.5)
         shape = imgin.shape
         pixels = shape[0]*shape[1]
         clipping = Persp.getDefault(imgin)
-        colors = ["white", "white"]
+        colors = ["yellow", "white"]
 
         for currColor in colors:
             debugOut = imgin 
-            print(currColor)
+
             # svm classification:
             bools = (self.clf.predict(imgin.reshape(pixels, 3)).reshape(
                 (shape[0], shape[1], 1)) == self.kNames[currColor]).astype("float")
@@ -174,13 +175,13 @@ class LaneDetector:
             boolimg = autoCanny(boolimg)
             cropped = region_of_interest(boolimg, np.array(
                 [clipping], np.int32))
-            edges = cropped.astype("uint8")
-            img = cv2.GaussianBlur(cropped, (3, 3), 0)
+            cropped = cropped.astype("uint8")
+            #img = cv2.GaussianBlur(cropped, (5, 5), 0)
             
-            
+
             # detect lines
             lines = cv2.HoughLines(edges, 1, np.pi/180, 175)
-            return bools
+            return edges
             if lines is None:
                 print("no lines found")
                 return debugOut
