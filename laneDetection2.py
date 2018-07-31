@@ -28,8 +28,8 @@ def getDefault(img):
     width = img.shape[1]
     return [
         (0, height),
-        (width//2 - HhorizonOffset, height//2+horizonOffset),
-        (width//2 + HhorizonOffset, height//2+horizonOffset),
+        (0,height-100),#(width//2 - HhorizonOffset, height//2+horizonOffset),
+        (width,height-100),#(width//2 + HhorizonOffset, height//2+horizonOffset),
         (width, height)
     ]
 
@@ -84,7 +84,7 @@ class LaneDetector:
         return img
 
     def calibrateKmeans(self, img, profile, **kwargs):
-
+        img=region_of_interest(getDefault())
         K = kwargs.get("K", 5)
         debug = kwargs.get("debug", False)
         blurSize = kwargs.get("blurSize", (5, 5))
@@ -179,7 +179,7 @@ class LaneDetector:
             #img = cv2.GaussianBlur(cropped, (5, 5), 0)
             
             edges=autoCanny(cropped)
-            
+
             # detect lines
             lines = cv2.HoughLines(edges, 1, np.pi/180, 175)
             return edges
