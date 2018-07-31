@@ -40,23 +40,16 @@ def getDefault(h, w):
     return p
 
 
-def unWarp(img, perpVerts, sizex=200, sizey=200):
-    dst = np.array(
-        [[0, 0], [sizex, 0], [sizex, sizey], [0, sizey]], np.float32)
-    M = cv2.getPerspectiveTransform(perpVerts, dst)
-    return cv2.warpPerspective(img, M, (sizex, sizey))
-
-
-def unwarp2(img):
+def unwarp(img):
     width = img.shape[1]
     height = img.shape[0]
     hLength = 50
     hDepth = 300
+
+    #TODO: tune this
     p = np.array([
         (0, height),
-        # (width//2 - HhorizonOffset, height//2+horizonOffset),
         (width//2 - hLength, height-hDepth),
-        # (width//2 + HhorizonOffset, height//2+horizonOffset),
         (width//2 + hLength, height-hDepth),
         (width, height)
     ], np.float32)
@@ -122,7 +115,7 @@ class LaneDetector:
 
     def calibrateKmeans(self, img, profile, **kwargs):
         # img=region_of_interest(img,getDefault(img.shape[0],img.shape[1]))
-        img = unwarp2(img)
+        img = unwarp(img)
 
         # Initialize hyperparamaters
         K = kwargs.get("K", 5)  # How many groups for k-means to cluster into
@@ -187,7 +180,7 @@ class LaneDetector:
             return res2
 
     def process3(self, imgin):
-        imgin = unwarp2(imgin)
+        imgin = unwarp(imgin)
         shape = imgin.shape
         pixels = shape[0]*shape[1]
         clipping = getDefault(imgin.shape[0], imgin.shape[1])
@@ -202,9 +195,11 @@ class LaneDetector:
             
             boolimg = bools.astype("uint8")*255
 
+            #TODO: use boolimg as a mask on normal img then threshold the img to get rid of noise
+
             # crop->grayscale->gaussblur->canny
 
-            #img = cv2.GaussianBlur(cropped, (5, 5), 0)
+            img = cv2.GaussianBlur(cropped, (5, 5), 0)
 
             edges = autoCanny(boolimg)
 
@@ -230,7 +225,7 @@ class LaneDetector:
                     m = unzero((y2-y1)/(unzero(x2-x1)))
                     b = y1-m*x1
                     lineColor = currColor
-
+                    #TODO: throw out horizontal lines
                     cv2.line(debugOut, (0, int(b)),
                              (1000, int(m*1000+b)), tuple(lineColor), 3)
                     cv2.circle(debugOut, (int(x0), int(y0)),

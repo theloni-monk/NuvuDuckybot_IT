@@ -11,8 +11,9 @@ Ld= LaneDetector() #needs more params
 cam=camera.Camera()
 scale=1
 p=ColorProfile.lanes
-calibImg = Ld.getCalibImage(cam)
-res=Ld.calibrateKmeans(calibImg, p, debug=True)
+#calibImg = Ld.getCalibImage(cam)
+#res=Ld.calibrateKmeans(calibImg, p, debug=True)
+Ld.loadSvm("/model.pkl")
 
 server = streamserver.Server(port=5000)
 server.serve() # Blocking; waits for a connection before continuing
