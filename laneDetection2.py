@@ -21,7 +21,7 @@ class LaneDetector:
         self.kLabels = None
         self.calibrated = False
 
-    def calibrate(self, img, profile, **kwargs):
+    def calibrateKmeans(self, img, profile, **kwargs):
         K = kwargs.get("K",5)
         debug=kwargs.get("debug",False)
         blurSize = kwargs.get("blurSize",(5,5))
@@ -61,6 +61,7 @@ class LaneDetector:
         if debug:
             return res2
 
+    
     def process2(self,img):
         img=cv2.GaussianBlur(img,(5,5),0)
         Z = img.reshape((-1,3))
@@ -95,9 +96,9 @@ if __name__ == "__main__":
     LD=LaneDetector()
     p=ColorProfile.lanes
     calibImg = LD.getCalibImage(cam)
-    res=LD.calibrate(calibImg, p, debug=True)
+    res=LD.calibrateKmeans(calibImg, p, debug=True)
     #print(LD.kProfile)
     while 1:
-        cv2.imshow('my webcam', LD.calibrate(cam.image))
+        cv2.imshow('my webcam', LD.calibrateKmeans(cam.image))
         if cv2.waitKey(1) == 27:
             break  # esc to quit
