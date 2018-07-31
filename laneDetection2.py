@@ -116,27 +116,109 @@ class LaneDetector:
         if debug:
             return res2
 
-    def process3(self,img):
-        img = cv2.resize(img,(0,0),fx=0.5,fy=0.5)
-        shape = img.shape
+
+
+
+    def grayscale(img): return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+
+    def region_of_interest(img, vertices):
+        mask = np.zeros_like(img)
+        match_mask_color = 255
+        cv2.fillPoly(mask, np.int32([vertices]).astype("int32"), (255, 255, 255))
+        masked_image = cv2.bitwise_and(img, mask)
+        return masked_image
+
+
+    def autoCanny(image, sigma=0.33):
+        # compute the median of the single channel pixel intensities
+        v = np.median(image)
+
+        # apply automatic Canny edge detection using the computed median
+        lower = int(max(0, (1.0 - sigma) * v))
+        upper = int(min(255, (1.0 + sigma) * v))
+        edged = cv2.Canny(image, lower, upper)
+
+        # return the edged image
+        return edged
+
+
+    def unzero(x):
+        if x == 0:
+            x = 0.0001
+        return x
+
+    def process3(self,imgin):
+        #img = cv2.resize(img,(0,0),fx=0.5,fy=0.5)
+        shape = imgin.shape
         pixels = shape[0]*shape[1]
-        bools = (self.clf.predict(img.reshape(pixels,3)).reshape((shape[0],shape[1],1))==self.kNames["yellow"]).astype("float")
-        return np.clip(bools,0.2,1)*(img/255)
+        height = color.shape[0]
+        width = color.shape[1]
+        horizonOffset = -100
+        HhorizonOffset = 100
+        region_of_interest_vertices = [
+            (0, height),
+            (width//2 - HhorizonOffset, height//2+horizonOffset),
+            (width//2 + HhorizonOffset, height//2+horizonOffset),
+            (width, height),
+        ]
+        colors=["yellow","white"]
+
+        for CurrColor in colors:
+            debugOut=imgin
+
+            #svm classification:
+            bools = (self.clf.predict(img.reshape(pixels,3)).reshape((shape[0],shape[1],1))==self.kNames[color]).astype("float")
+            boolimg = bools.astype("uint8")*255 
+            
+            #crop->grayscale->gaussblur->canny
+            cropped = region_of_interest(color, np.array([region_of_interest_vertices], np.int32))
+            img = grayscale(cropped)
+            img = cv2.GaussianBlur(img, (5, 5), 0)
+            edges = autoCanny(img)
+
+            #detect lines
+            lines = cv2.HoughLines(edges, 1, np.pi/180, 175)
+
+            if lines is None:
+                print("no lines found")
+                return debugOut
+
+            for line in lines:
+                for rho, theta in line[:10]:
+                    a = np.cos(theta)
+                    b = np.sin(theta)
+                    x0 = a*rho
+                    y0 = b*rho
+                    x1 = int(x0 + 1000*(-b))
+                    y1 = int(y0 + 1000*(a))
+                    x2 = int(x0 - 1000*(-b))
+                    y2 = int(y0 - 1000*(a))
+
+                    m = unzero((y2-y1)/(unzero(x2-x1)))
+                    b = y1-m*x1
+                    lineColor = CurrColor
+
+                    cv2.line(output, (0, int(b)),
+                            (1000, int(m*1000+b)), tuple(lineColor), 3)
+                    cv2.circle(output, (int(x0), int(y0)), 4, (255, 0, 0), -1)
+
+        return debugOut
+
+
+
     def loadSvm(self, path):
         with open(path, 'rb') as fid:
-            self.Svm=Cpickle.load(fid)
+            self.clf=Cpickle.load(fid)
     
     def saveSvm(self, path):
         with open(path, 'wb') as fid:
-            cPickle.dump(self.Svm, fid)  
-    
-    def trainSvm(self):
-        pass
-
+            cPickle.dump(self.clf, fid)  
 
     def log(self, m):
         if self.verbose:
             print(m)  # printout if verbose
+
 if __name__ == "__main__":
     cam = Camera(mirror=True)
     LD=LaneDetector()
