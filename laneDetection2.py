@@ -27,19 +27,28 @@ def getDefault(h,w):
     height = h
     width = w
     #print((w,h))
-    return [
-        (0, height),
-        (0,height-300),#(width//2 - HhorizonOffset, height//2+horizonOffset),
-        (width,height-300),#(width//2 + HhorizonOffset, height//2+horizonOffset),
-        (width, height)
-    ]
+    return 
 
-def unWarp(self,img, perpVerts, sizex=200, sizey=200):
-    dst = np.array([[0, 0], [sizex, 0], [sizex, sizey], [0, sizey]])
+def unWarp(img, perpVerts, sizex=200, sizey=200):
+    dst = np.array([[0, 0], [sizex, 0], [sizex, sizey], [0, sizey]],np.float32)
     M = cv2.getPerspectiveTransform(perpVerts, dst)
-    return cv2.warpPerspective(img, M)
+    return cv2.warpPerspective(img, M,(sizex,sizey))
 
-
+def unwarp2(img):
+    width = img.shape[1]
+    height = img.shape[0]
+    hLength = 450
+    hDepth = 300
+    p = np.array([
+        (0, height),
+        (width//2 - hLength,height-hDepth),#(width//2 - HhorizonOffset, height//2+horizonOffset),
+        (width//2 + hLength,height-hDepth),#(width//2 + HhorizonOffset, height//2+horizonOffset),
+        (width, height)
+    ],np.float32)
+    dst = np.array([[0, height], [0, 0], [width, 0], [width, height]],np.float32)
+    M = cv2.getPerspectiveTransform(p, dst)
+    
+    return cv2.warpPerspective(img, M,(width,height))
 def grayscale(img): return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
 
@@ -85,7 +94,8 @@ class LaneDetector:
         return img
 
     def calibrateKmeans(self, img, profile, **kwargs):
-        img=region_of_interest(img,getDefault(img.shape[0],img.shape[1]))
+        #img=region_of_interest(img,getDefault(img.shape[0],img.shape[1]))
+        img = unwarp2(img)
         K = kwargs.get("K", 5)
         debug = kwargs.get("debug", False)
         blurSize = kwargs.get("blurSize", (5, 5))
@@ -233,6 +243,6 @@ if __name__ == "__main__":
     res = LD.calibrateKmeans(calibImg, p, debug=True, stepSize=20)
     # print(LD.kProfile)
     while 1:
-        cv2.imshow('my webcam', LD.process3(cam.image))
+        cv2.imshow('my webcam', res)#LD.process3(cam.image))
         if cv2.waitKey(1) == 27:
             break  # esc to quit
