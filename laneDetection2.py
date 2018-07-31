@@ -20,24 +20,23 @@ class ColorProfile:
     }
 
 
-class Persp:
-    horizonOffset = -100
-    HhorizonOffset = 100
+horizonOffset = -100
+HhorizonOffset = 100
 
-    def getDefault(img):
-        height = img.shape[0]
-        width = img.shape[1]
-        return [
-            (0, height),
-            (width//2 - Persp.HhorizonOffset, height//2+Persp.horizonOffset),
-            (width//2 + Persp.HhorizonOffset, height//2+Persp.horizonOffset),
-            (width, height)
-        ]
+def getDefault(img):
+    height = img.shape[0]
+    width = img.shape[1]
+    return [
+        (0, height),
+        (width//2 - HhorizonOffset, height//2+horizonOffset),
+        (width//2 + HhorizonOffset, height//2+horizonOffset),
+        (width, height)
+    ]
 
-    def unWarp(self,img, perpVerts, sizex=200, sizey=200):
-        dst = np.array([[0, 0], [sizex, 0], [sizex, sizey], [0, sizey]])
-        M = cv2.getPerspectiveTransform(perpVerts, dst)
-        return cv2.warpPerspective(img, M)
+def unWarp(self,img, perpVerts, sizex=200, sizey=200):
+    dst = np.array([[0, 0], [sizex, 0], [sizex, sizey], [0, sizey]])
+    M = cv2.getPerspectiveTransform(perpVerts, dst)
+    return cv2.warpPerspective(img, M)
 
 
 def grayscale(img): return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
