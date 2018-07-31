@@ -5,7 +5,7 @@ import time
 import colorsys
 import sys
 from sklearn import svm
-import cPickle
+import pickle
 
 def normLayer(l):
     return (l-np.min(l))/(np.max(l)-np.min(l))
@@ -29,6 +29,7 @@ class Pspec:
             (width//2 + Pspec.HhorizonOffset, height//2+Pspec.horizonOffset),
             (width, height)
         ]
+    
     def unWarp(img, perpVerts,sizex=200,sizey=200):
         dst = np.array([[0,0],[sizex,0],[sizex,sizey],[0,sizey]])
         M = cv2.getPerspectiveTransform(perpVerts,dst)
@@ -209,11 +210,11 @@ class LaneDetector:
 
     def loadSvm(self, path):
         with open(path, 'rb') as fid:
-            self.clf=Cpickle.load(fid)
+            self.clf=pickle.load(fid)
     
     def saveSvm(self, path):
         with open(path, 'wb') as fid:
-            cPickle.dump(self.clf, fid)  
+            pickle.dump(self.clf, fid)  
 
     def log(self, m):
         if self.verbose:
