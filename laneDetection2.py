@@ -23,7 +23,7 @@ class Pspec:
     def getDefault(img):
         height = img.shape[0]
         width = img.shape[1]
-        return default = [
+        return [
             (0, height),
             (width//2 - Pspec.HhorizonOffset, height//2+Pspec.horizonOffset),
             (width//2 + Pspec.HhorizonOffset, height//2+Pspec.horizonOffset),
