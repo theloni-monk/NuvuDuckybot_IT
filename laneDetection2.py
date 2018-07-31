@@ -26,8 +26,15 @@ HhorizonOffset = 100
 def getDefault(h,w):
     height = h
     width = w
-    #print((w,h))
-    return 
+    hLength = 50
+    hDepth = 100
+    p = np.array([
+        (0, height),
+        (width//2 - hLength, height-hDepth),#(width//2 - HhorizonOffset, height//2+horizonOffset),
+        (width//2 + hLength, height-hDepth),#(width//2 + HhorizonOffset, height//2+horizonOffset),
+        (width, height)
+    ],np.float32)
+    return p
 
 def unWarp(img, perpVerts, sizex=200, sizey=200):
     dst = np.array([[0, 0], [sizex, 0], [sizex, sizey], [0, sizey]],np.float32)
@@ -37,7 +44,7 @@ def unWarp(img, perpVerts, sizex=200, sizey=200):
 def unwarp2(img):
     width = img.shape[1]
     height = img.shape[0]
-    hLength = 150
+    hLength = 450
     hDepth = 300
     p = np.array([
         (0, height),
@@ -49,7 +56,7 @@ def unwarp2(img):
     M = cv2.getPerspectiveTransform(p, dst)
     
     return cv2.warpPerspective(img, M,(width,height))
-    
+
 def grayscale(img): return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
 
@@ -185,8 +192,7 @@ class LaneDetector:
 
             # crop->grayscale->gaussblur->canny
             
-            cropped = region_of_interest(boolimg, np.array(
-                [clipping], np.int32))
+            cropped = region_of_interest(boolimg, np.array([clipping], np.int32))
             cropped = cropped.astype("uint8")
             #img = cv2.GaussianBlur(cropped, (5, 5), 0)
             
