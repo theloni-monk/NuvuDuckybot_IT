@@ -173,7 +173,7 @@ class LaneDetector:
             boolimg = bools.astype("uint8")*255
 
             # crop->grayscale->gaussblur->canny
-            boolimg = autoCanny(boolimg)
+            
             cropped = region_of_interest(boolimg, np.array(
                 [clipping], np.int32))
             cropped = cropped.astype("uint8")
