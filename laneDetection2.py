@@ -26,10 +26,11 @@ HhorizonOffset = 100
 def getDefault(h,w):
     height = h
     width = w
+    print((w,h))
     return [
         (0, height),
-        (0,height-100),#(width//2 - HhorizonOffset, height//2+horizonOffset),
-        (width,height-100),#(width//2 + HhorizonOffset, height//2+horizonOffset),
+        (0,height-350),#(width//2 - HhorizonOffset, height//2+horizonOffset),
+        (width,height-350),#(width//2 + HhorizonOffset, height//2+horizonOffset),
         (width, height)
     ]
 
