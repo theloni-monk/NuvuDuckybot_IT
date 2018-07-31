@@ -160,7 +160,7 @@ class LaneDetector:
         #img = cv2.resize(img,(0,0),fx=0.5,fy=0.5)
         shape = imgin.shape
         pixels = shape[0]*shape[1]
-        clipping = Persp.getDefault(imgin)
+        clipping = getDefault(imgin)
         colors = ["yellow", "white"]
 
         for currColor in colors:
