@@ -50,7 +50,7 @@ def unWarp(img, perpVerts, sizex=200, sizey=200):
 def unwarp2(img):
     width = img.shape[1]
     height = img.shape[0]
-    hLength = 450
+    hLength = 50
     hDepth = 300
     p = np.array([
         (0, height),
@@ -199,16 +199,14 @@ class LaneDetector:
             # svm classification:
             bools = (self.clf.predict(imgin.reshape(pixels, 3)).reshape(
                 (shape[0], shape[1], 1)) == self.kNames[currColor]).astype("float")
+            
             boolimg = bools.astype("uint8")*255
 
             # crop->grayscale->gaussblur->canny
 
-            cropped = region_of_interest(
-                boolimg, np.array([clipping], np.int32))
-            cropped = cropped.astype("uint8")
             #img = cv2.GaussianBlur(cropped, (5, 5), 0)
 
-            edges = autoCanny(cropped)
+            edges = autoCanny(boolimg)
 
             return edges  # always yellow
             # detect lines
