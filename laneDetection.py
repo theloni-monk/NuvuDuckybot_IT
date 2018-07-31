@@ -4,7 +4,8 @@ import numpy as np
 import time
 
 
-def grayscale(img): return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+def grayscale(img): 
+    return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
 
 def region_of_interest(img, vertices):
