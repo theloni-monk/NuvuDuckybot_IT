@@ -26,11 +26,11 @@ HhorizonOffset = 100
 def getDefault(h,w):
     height = h
     width = w
-    print((w,h))
+    #print((w,h))
     return [
         (0, height),
-        (0,height-350),#(width//2 - HhorizonOffset, height//2+horizonOffset),
-        (width,height-350),#(width//2 + HhorizonOffset, height//2+horizonOffset),
+        (0,height-300),#(width//2 - HhorizonOffset, height//2+horizonOffset),
+        (width,height-300),#(width//2 + HhorizonOffset, height//2+horizonOffset),
         (width, height)
     ]
 
@@ -183,7 +183,9 @@ class LaneDetector:
 
             # detect lines
             lines = cv2.HoughLines(edges, 1, np.pi/180, 175)
-            return edges
+            
+            return lines # always yellow
+
             if lines is None:
                 print("no lines found")
                 return debugOut
