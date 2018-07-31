@@ -37,7 +37,7 @@ def unWarp(img, perpVerts, sizex=200, sizey=200):
 def unwarp2(img):
     width = img.shape[1]
     height = img.shape[0]
-    hLength = 450
+    hLength = 150
     hDepth = 300
     p = np.array([
         (0, height),
@@ -49,6 +49,7 @@ def unwarp2(img):
     M = cv2.getPerspectiveTransform(p, dst)
     
     return cv2.warpPerspective(img, M,(width,height))
+    
 def grayscale(img): return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
 
@@ -168,7 +169,7 @@ class LaneDetector:
             return res2
 
     def process3(self, imgin):
-
+        imgin=unwarp2(imgin)
         shape = imgin.shape
         pixels = shape[0]*shape[1]
         clipping = getDefault(imgin.shape[0], imgin.shape[1])
