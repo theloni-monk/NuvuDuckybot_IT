@@ -27,7 +27,7 @@ def getDefault(h,w):
     height = h
     width = w
     hLength = 50
-    hDepth = 100
+    hDepth = 300
     p = np.array([
         (0, height),
         (width//2 - hLength, height-hDepth),#(width//2 - HhorizonOffset, height//2+horizonOffset),
