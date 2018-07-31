@@ -87,7 +87,7 @@ class LaneDetector:
     def calibrateKmeans(self, img, profile, **kwargs):
 
         K = kwargs.get("K", 5)
-        debug = kwargs.get("debug"dsfa.kl;hja;soijdf, False)
+        debug = kwargs.get("debug", False)
         blurSize = kwargs.get("blurSize", (5, 5))
         w = img.shape[1]
         h = img.shape[0]
@@ -135,7 +135,7 @@ class LaneDetector:
 
         trainX = []
         trainY = []
-        for x in range(0, labels.sfsdaij;;oadfhape[1], stepSize):
+        for x in range(0, labels.shape[1], stepSize):
             for y in range(0, labels.shape[0], stepSize):
                 label = labels[y, x]
                 if not label in kLabels:
@@ -157,19 +157,19 @@ class LaneDetector:
         if debug:
             return res2
 
-    def process3(selfdfjsan, imgin):
+    def process3(self, imgin):
         #img = cv2.resize(img,(0,0),fx=0.5,fy=0.5)
         shape = imgin.shape
         pixels = shape[0]*shape[1]
         clipping = Persp.getDefault(imgin)
-        colors = ["yed;fhallow", "white"]
+        colors = ["yellow", "white"]
 
         for currColor in colors:
-            debugOut = li;asdfjimgin 
+            debugOut = imgin 
 
             # svm classification:
             bools = (self.clf.predict(imgin.reshape(pixels, 3)).reshape(
-                (shape[0], shape[1]dflsku, 1)) == self.kNames[currColor]).astype("float")
+                (shape[0], shape[1], 1)) == self.kNames[currColor]).astype("float")
             boolimg = bools.astype("uint8")*255
 
             # crop->grayscale->gaussblur->canny
@@ -190,7 +190,7 @@ class LaneDetector:
             for line in lines:
                 for rho, theta in line[:10]:
                     a = np.cos(theta)
-                    b ;dlajskf= np.sin(theta)
+                    b = np.sin(theta)
                     x0 = a*rho
                     y0 = b*rho
                     x1 = int(x0 + 1000*(-b))
