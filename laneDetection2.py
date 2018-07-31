@@ -17,6 +17,23 @@ class ColorProfile:
         "grey":(150,150,150)
     }
 
+class Pspec:
+    horizonOffset = -100
+    HhorizonOffset = 100
+    def getDefault(img):
+        height = img.shape[0]
+        width = img.shape[1]
+        return default = [
+            (0, height),
+            (width//2 - Pspec.HhorizonOffset, height//2+Pspec.horizonOffset),
+            (width//2 + Pspec.HhorizonOffset, height//2+Pspec.horizonOffset),
+            (width, height)
+        ]
+    def unWarp(img, perpVerts,sizex=200,sizey=200):
+        dst = np.array([[0,0],[sizex,0],[sizex,sizey],[0,sizey]])
+        M = cv2.getPerspectiveTransform(perpVerts,dst)
+        return cv2.warpPerspective(img, M)
+
 class LaneDetector:
     def __init__(self, **kwargs):
         self.kProfile = None
@@ -114,7 +131,7 @@ class LaneDetector:
             cPickle.dump(self.Svm, fid)  
     
     def trainSvm(self):
-        
+        pass
 
 
     def log(self, m):
