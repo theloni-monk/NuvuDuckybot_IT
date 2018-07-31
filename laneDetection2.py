@@ -181,10 +181,11 @@ class LaneDetector:
             
             edges=autoCanny(cropped)
 
+            return edges # always yellow
             # detect lines
             lines = cv2.HoughLines(edges, 1, np.pi/180, 175)
             
-            return lines # always yellow
+            
 
             if lines is None:
                 print("no lines found")
