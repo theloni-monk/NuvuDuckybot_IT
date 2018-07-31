@@ -178,7 +178,8 @@ class LaneDetector:
             cropped = cropped.astype("uint8")
             #img = cv2.GaussianBlur(cropped, (5, 5), 0)
             
-
+            edges=autoCanny(cropped)
+            
             # detect lines
             lines = cv2.HoughLines(edges, 1, np.pi/180, 175)
             return edges
