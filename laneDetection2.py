@@ -43,7 +43,7 @@ def getDefault(h, w):
 def unwarp(img):
     width = img.shape[1]
     height = img.shape[0]
-    hLength = 50
+    hLength = 45
     hDepth = 300
 
     # TODO: tune this
@@ -139,7 +139,7 @@ class LaneDetector:
 
         chsv = np.array([colorsys.rgb_to_hsv(*(c[::-1]/255))
                          for c in center])  # Center colors as HSV
-
+        print("hmm")
         for name in profile:
             color_rgb = profile[name]
             color = np.array(colorsys.rgb_to_hsv(
@@ -182,13 +182,17 @@ class LaneDetector:
             return res2
 
     def process3(self, imgin):
-        imgin = unwarp(imgin)
+        imgin = unwarp(imgin) #gets rid of perspective effect
         shape = imgin.shape
         pixels = shape[0]*shape[1]
         clipping = getDefault(imgin.shape[0], imgin.shape[1])
         colors = ["yellow", "white"]
-
-        for currColor in colors:
+        Cimgs = []
+        print(self.kNames)
+        # unwarp->mask->grayscale->gaussblur->canny->houghLines
+        debugOut=imgin
+        for currColor in self.kNames:
+            
             debugOut = imgin
 
             # svm classification:
@@ -197,15 +201,15 @@ class LaneDetector:
 
             boolimg = bools.astype("uint8")*255
 
-            # TODO: use boolimg as a mask on normal img then threshold the img to get rid of noise
+            Cimgs.append(grayscale(np.bitwise_and(imgin,boolimg))) #masking
+            #TODO: use boolimg as a mask on normal img then threshold the img to get rid of noise
+            
+            Cimgs[-1][Cimgs<175]=0
 
-            # crop->grayscale->gaussblur->canny
-
-            img = cv2.GaussianBlur(cropped, (5, 5), 0)
+            img = cv2.GaussianBlur(Cimgs[-1], (5, 5), 0)
 
             edges = autoCanny(boolimg)
 
-            return edges  # always yellow
             # detect lines
             lines = cv2.HoughLines(edges, 1, np.pi/180, 175)
 
@@ -227,7 +231,9 @@ class LaneDetector:
                     m = unzero((y2-y1)/(unzero(x2-x1)))
                     b = y1-m*x1
                     lineColor = currColor
-                    # TODO: throw out horizontal lines
+                    #TODO: throw out horizontal lines
+
+                    #for debugging, not actually nec
                     cv2.line(debugOut, (0, int(b)),
                              (1000, int(m*1000+b)), tuple(lineColor), 3)
                     cv2.circle(debugOut, (int(x0), int(y0)),
@@ -276,25 +282,25 @@ class LaneDetector:
 
     def loadSvm(self, path):
         with open(path, 'rb') as fid:
-            self.clf = pickle.load(fid)
+            temp=pickle.load(fid)
+            self.clf = temp[0]
+            self.kNames=temp[1]
+            self.kLabels=temp[2]
 
     def saveSvm(self, path):
         with open(path, 'wb') as fid:
-            pickle.dump(self.clf, fid)
-
-    def log(self, m):
-        if self.verbose:
-            print(m)  # printout if verbose
+            pickle.dump([self.clf,self.kNames,self.kLabels], fid)
 
 
 if __name__ == "__main__":
     cam = Camera(mirror=True)
     LD = LaneDetector()
-    p = ColorProfile.lanes
-    calibImg = LD.getCalibImage(cam)
-    res = LD.calibrateKmeans(calibImg, p, debug=True, stepSize=20)
+    res=LD.calibrateKmeans(LD.getCalibImage(cam), ColorProfile.lanes, debug=True)
+    LD.saveSvm("C:\\Users\\proff\\OneDrive\\Documents\\GitHub\\NuvuDuckieBot-TI\\model.pkl")
+    while True:
+        cv2.imshow('çalibration img',res)
 
-    while 1:
-        cv2.imshow('my webcam', res)  # LD.process3(cam.image))
+    while True:
+        cv2.imshow('my webcam', LD.process3(cam.image))  # LD.process3(cam.image))
         if cv2.waitKey(1) == 27:
             break  # esc to quit
