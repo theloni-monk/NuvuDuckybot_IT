@@ -96,6 +96,7 @@ class LaneDetector:
         self.kProfile = {}
         self.kLabels = {}
         self.kNames = {}
+        self.kProfRGB={}
         self.calibrated = False
         self.clf = None
 
@@ -151,6 +152,7 @@ class LaneDetector:
             self.kProfile[name] = chsv[n]
             self.kLabels[n] = name
             self.kNames[name] = n
+            self.kProfRGB[name]=profile[name]
 
         center = np.uint8(center)
 
@@ -186,7 +188,6 @@ class LaneDetector:
         shape = imgin.shape
         pixels = shape[0]*shape[1]
         clipping = getDefault(imgin.shape[0], imgin.shape[1])
-        colors = ["yellow", "white"]
         Cimgs = []
         print(self.kNames)
         # unwarp->mask->grayscale->gaussblur->canny->houghLines
@@ -204,9 +205,10 @@ class LaneDetector:
             Cimgs.append(grayscale(np.bitwise_and(imgin,boolimg))) #masking
             #TODO: use boolimg as a mask on normal img then threshold the img to get rid of noise
             
-            Cimgs[-1][Cimgs<175]=0
+            Cimg=Cimgs[-1]
+            Cimg[Cimg<180]=0
 
-            img = cv2.GaussianBlur(Cimgs[-1], (5, 5), 0)
+            img = cv2.GaussianBlur(Cimg, (5, 5), 0)
 
             edges = autoCanny(boolimg)
 
@@ -230,12 +232,12 @@ class LaneDetector:
 
                     m = unzero((y2-y1)/(unzero(x2-x1)))
                     b = y1-m*x1
-                    lineColor = currColor
+                    lineColor = self.kProfRGB[currColor]
                     #TODO: throw out horizontal lines
 
                     #for debugging, not actually nec
                     cv2.line(debugOut, (0, int(b)),
-                             (1000, int(m*1000+b)), tuple(lineColor), 3)
+                             (1000, int(m*1000+b)), tuple(lineColor), 10)
                     cv2.circle(debugOut, (int(x0), int(y0)),
                                4, (255, 0, 0), -1)
 
@@ -286,19 +288,23 @@ class LaneDetector:
             self.clf = temp[0]
             self.kNames=temp[1]
             self.kLabels=temp[2]
+            self.kProfRGB=temp[3]
 
     def saveSvm(self, path):
         with open(path, 'wb') as fid:
-            pickle.dump([self.clf,self.kNames,self.kLabels], fid)
+            pickle.dump([self.clf,self.kNames,self.kLabels,self.kProfRGB], fid)
 
 
 if __name__ == "__main__":
     cam = Camera(mirror=True)
     LD = LaneDetector()
     res=LD.calibrateKmeans(LD.getCalibImage(cam), ColorProfile.lanes, debug=True)
-    LD.saveSvm("C:\\Users\\proff\\OneDrive\\Documents\\GitHub\\NuvuDuckieBot-TI\\model.pkl")
+    LD.saveSvm("model.pkl")
     while True:
         cv2.imshow('çalibration img',res)
+        if cv2.waitKey(1) == 27:
+            break  # esc to quit
+
 
     while True:
         cv2.imshow('my webcam', LD.process3(cam.image))  # LD.process3(cam.image))
