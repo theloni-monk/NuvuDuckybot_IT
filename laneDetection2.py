@@ -274,7 +274,7 @@ class LaneDetector:
         # Whether to find the mean or median of the lane pixels to find the lane marker center
         calcType = kwargs.get("center", "median")
         # Whether to denoise
-        doDenoising = kwargs.get("denoise", True)
+        doDenoising = kwargs.get("denoise", False)
         # The extracted map of colorId colored pixels
         bools = self.getBools(img, colorId)
 
@@ -352,8 +352,9 @@ class LaneDetector:
 if __name__ == "__main__":
     cam = Camera(mirror=True)
     LD = LaneDetector()
-    res = LD.calibrateKmeans(LD.getCalibImage(
-        cam), ColorProfile.lanes, debug=True)
+    calibImg = LD.getCalibImage(cam)
+    cv2.imwrite("calib.png",calibImg)
+    res = LD.calibrateKmeans(calibImg, ColorProfile.lanes, debug=True)
     LD.saveSvm("model.pkl")
     while True:
 
