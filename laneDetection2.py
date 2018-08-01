@@ -312,7 +312,7 @@ if __name__ == "__main__":
     res=LD.calibrateKmeans(LD.getCalibImage(cam), ColorProfile.lanes, debug=True)
     LD.saveSvm("model.pkl")
     while True:
-        cv2.imshow('çalibration img',res)
+        cv2.imshow('calibration img', res)
         if cv2.waitKey(1) == 27:
             break  # esc to quit
 
