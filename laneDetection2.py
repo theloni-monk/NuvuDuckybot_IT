@@ -104,7 +104,7 @@ def denoise(imgin, boolimg):
     Cimg[Cimg < 180] = 0
     Cimg = Cimg.astype("float")/255
 
-
+    return Cimg
 class LaneDetector:
     def __init__(self, **kwargs):
         self.kProfile = {}
