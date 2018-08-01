@@ -46,7 +46,8 @@ def unwarp(img):
     hLength = 45
     hDepth = 300
 
-    #TODO: tune this
+    #TODO: tune this 
+    #   no -Ian
     p = np.array([
         (0, height),
         (width//2 - hLength, height-hDepth),
