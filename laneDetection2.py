@@ -40,6 +40,10 @@ def getDefault(h, w):
     return p
 
 
+def drawVertical(img, n, color):
+    cv2.line(img, (n, 0), (n, img.shape[0]), color, 2)
+
+
 def unwarp(img):
     width = img.shape[1]
     height = img.shape[0]
@@ -116,7 +120,7 @@ class LaneDetector:
 
     def calibrateKmeans(self, img, profile, **kwargs):
         # img=region_of_interest(img,getDefault(img.shape[0],img.shape[1]))
-        img = unwarp(img)
+        #img = unwarp(img)
 
         # Initialize hyperparamaters
         K = kwargs.get("K", 5)  # How many groups for k-means to cluster into
@@ -240,26 +244,30 @@ class LaneDetector:
                                4, (255, 0, 0), -1)
 
         return debugOut
-
+    def getBools(self,img,colorId):
+        shape = img.shape
+        pixels = shape[0]*shape[1]
+        return (self.clf.predict(img.reshape(pixels, 3)).reshape(
+                (shape[0], shape[1], 1)) == self.kNames[colorId]).astype("float")
     def findLine(self, img, colorId, **kwargs):
         shape = img.shape
+        pixels = shape[0]*shape[1]
         bottom = shape[0]
         # A 1D array where each element is its X value
         rowMap = np.array([x for x in range(shape[1])])
         # The extracted map of colorId colored pixels
-        bools = (self.clf.predict(img.reshape(img.size, 3)).reshape(
-                (shape[0], shape[1], 1)) == self.kNames[colorId]).astype("float")
+        bools = self.getBools(img,colorId)
         # How many pixels up from the bottom to sample
         depth = kwargs.get("cascadeDepth", 100)
         # Whether to find the mean or median of the lane pixels to find the lane marker center
-        calcType = kwargs.get("center", "mean")
+        calcType = kwargs.get("center", "median")
 
         if calcType == "mean":
             # The sum of the X coordinates of each white pixel
             posSum = np.zeros((shape[1],))
             pixels = 0
             for y in range(bottom-depth, bottom):
-                row = bools[y]
+                row = bools[y].reshape((shape[1],))
                 posSum += rowMap*row
                 # Compute how many row pixels are actually being added to the average
                 pixels += (row == 1).sum()
@@ -270,16 +278,17 @@ class LaneDetector:
             posSamples = []
 
             for y in range(bottom-depth, bottom):
-                for cell in bools[y]:
+                row = bools[y].reshape((shape[1],))
+                for x,cell in enumerate(row):
                     if cell == 1:
                         posSamples.append(rowMap[x])
 
-            return np.array(posSamples).median()
+            return np.median(np.array(posSamples))
 
     def process4(self, img):
         # Position of respective lines on the X-axis
-        roadCenter = self.findLine(img, "yellow", cascadeDepth=100)
-        roadEdge = self.findLine(img, "white", cascadeDepth=40)
+        roadCenter = self.findLine(img, "yellow", cascadeDepth=200)
+        roadEdge = self.findLine(img, "white", cascadeDepth=100)
         robotPos = img.shape[1]/2
         laneCenter = (roadCenter+roadEdge)/2
         print("-----")
@@ -289,7 +298,19 @@ class LaneDetector:
         print("Robot Pos:   "+str(robotPos))
         print("Lane center: "+str(laneCenter))
         print("-----")
-        return img
+        try:
+            drawVertical(img,int(laneCenter),(255,0,0))
+        except:
+            pass
+        try:
+            drawVertical(img,int(roadCenter),(255,0,0))
+        except:
+            pass
+        try:
+            drawVertical(img,int(roadEdge),(255,0,0))
+        except:
+            pass
+        return img#self.getBools(img,"yellow")
 
     def loadSvm(self, path):
         with open(path, 'rb') as fid:
@@ -310,8 +331,9 @@ if __name__ == "__main__":
         cam), ColorProfile.lanes, debug=True)
     # LD.saveSvm("C:\\Users\\proff\\OneDrive\\Documents\\GitHub\\NuvuDuckieBot-TI\\model.pkl")
     while True:
-        cv2.imshow('calibration img', res)
-        LD.process4(cam.iamge)
+
+        cv2.imshow('calibration img', LD.process4(cam.image))
+
         if cv2.waitKey(1) == 27:
             break  # esc to quit
     while True:
