@@ -95,12 +95,22 @@ def unzero(x):
     return x
 
 
+def denoise(imgin, boolimg):
+    boolimg = bools.astype("uint8")*255
+
+    Cimg = grayscale(np.bitwise_and(imgin, boolimg))  # masking
+    # TODO: use boolimg as a mask on normal img then threshold the img to get rid of noise
+
+    Cimg[Cimg < 180] = 0
+    Cimg = Cimg.astype("float")/255
+
+
 class LaneDetector:
     def __init__(self, **kwargs):
         self.kProfile = {}
         self.kLabels = {}
         self.kNames = {}
-        self.kProfRGB={}
+        self.kProfRGB = {}
         self.calibrated = False
         self.clf = None
 
@@ -156,7 +166,7 @@ class LaneDetector:
             self.kProfile[name] = chsv[n]
             self.kLabels[n] = name
             self.kNames[name] = n
-            self.kProfRGB[name]=profile[name]
+            self.kProfRGB[name] = profile[name]
 
         center = np.uint8(center)
 
@@ -206,11 +216,11 @@ class LaneDetector:
 
             boolimg = bools.astype("uint8")*255
 
-            Cimgs.append(grayscale(np.bitwise_and(imgin,boolimg))) #masking
-            #TODO: use boolimg as a mask on normal img then threshold the img to get rid of noise
-            
-            Cimg=Cimgs[-1]
-            Cimg[Cimg<180]=0
+            Cimgs.append(grayscale(np.bitwise_and(imgin, boolimg)))  # masking
+            # TODO: use boolimg as a mask on normal img then threshold the img to get rid of noise
+
+            Cimg = Cimgs[-1]
+            Cimg[Cimg < 180] = 0
 
             img = cv2.GaussianBlur(Cimg, (5, 5), 0)
 
@@ -237,7 +247,7 @@ class LaneDetector:
                     m = unzero((y2-y1)/(unzero(x2-x1)))
                     b = y1-m*x1
                     lineColor = self.kProfRGB[currColor]
-                    #TODO: throw out horizontal lines
+                    # TODO: throw out horizontal lines
 
                     # for debugging, not actually nec
                     cv2.line(debugOut, (0, int(b)),
@@ -246,23 +256,30 @@ class LaneDetector:
                                4, (255, 0, 0), -1)
 
         return debugOut
-    def getBools(self,img,colorId):
+
+    def getBools(self, img, colorId):
         shape = img.shape
         pixels = shape[0]*shape[1]
         return (self.clf.predict(img.reshape(pixels, 3)).reshape(
                 (shape[0], shape[1], 1)) == self.kNames[colorId]).astype("float")
+
     def findLine(self, img, colorId, **kwargs):
         shape = img.shape
         pixels = shape[0]*shape[1]
         bottom = shape[0]
         # A 1D array where each element is its X value
         rowMap = np.array([x for x in range(shape[1])])
-        # The extracted map of colorId colored pixels
-        bools = self.getBools(img,colorId)
         # How many pixels up from the bottom to sample
         depth = kwargs.get("cascadeDepth", 100)
         # Whether to find the mean or median of the lane pixels to find the lane marker center
         calcType = kwargs.get("center", "median")
+        # Whether to denoise
+        doDenoising = kwargs.get("denoise", True)
+        # The extracted map of colorId colored pixels
+        bools = self.getBools(img, colorId)
+
+        if doDenoising:
+            bools = denoise(img,bools)
 
         if calcType == "mean":
             # The sum of the X coordinates of each white pixel
@@ -281,7 +298,7 @@ class LaneDetector:
 
             for y in range(bottom-depth, bottom):
                 row = bools[y].reshape((shape[1],))
-                for x,cell in enumerate(row):
+                for x, cell in enumerate(row):
                     if cell == 1:
                         posSamples.append(rowMap[x])
 
@@ -301,36 +318,38 @@ class LaneDetector:
         print("Lane center: "+str(laneCenter))
         print("-----")
         try:
-            drawVertical(img,int(laneCenter),(255,0,0))
+            drawVertical(img, int(laneCenter), (255, 0, 0))
         except:
             pass
         try:
-            drawVertical(img,int(roadCenter),(255,0,0))
+            drawVertical(img, int(roadCenter), (255, 0, 0))
         except:
             pass
         try:
-            drawVertical(img,int(roadEdge),(255,0,0))
+            drawVertical(img, int(roadEdge), (255, 0, 0))
         except:
             pass
-        return img#self.getBools(img,"yellow")
+        return img  # self.getBools(img,"yellow")
 
     def loadSvm(self, path):
         with open(path, 'rb') as fid:
             temp = pickle.load(fid)
             self.clf = temp[0]
-            self.kNames=temp[1]
-            self.kLabels=temp[2]
-            self.kProfRGB=temp[3]
+            self.kNames = temp[1]
+            self.kLabels = temp[2]
+            self.kProfRGB = temp[3]
 
     def saveSvm(self, path):
         with open(path, 'wb') as fid:
-            pickle.dump([self.clf,self.kNames,self.kLabels,self.kProfRGB], fid)
+            pickle.dump(
+                [self.clf, self.kNames, self.kLabels, self.kProfRGB], fid)
 
 
 if __name__ == "__main__":
     cam = Camera(mirror=True)
     LD = LaneDetector()
-    res=LD.calibrateKmeans(LD.getCalibImage(cam), ColorProfile.lanes, debug=True)
+    res = LD.calibrateKmeans(LD.getCalibImage(
+        cam), ColorProfile.lanes, debug=True)
     LD.saveSvm("model.pkl")
     while True:
 
@@ -338,7 +357,6 @@ if __name__ == "__main__":
 
         if cv2.waitKey(1) == 27:
             break  # esc to quit
-
 
     while True:
         cv2.imshow('my webcam', res)  # LD.process3(cam.image))
