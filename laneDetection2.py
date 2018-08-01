@@ -155,19 +155,22 @@ class LaneDetector:
         chsv = np.array([colorsys.rgb_to_hsv(*(c[::-1]/255))
                          for c in center])  # Center colors as HSV
         print("hmm")
+        used = set()
         for name in profile:
             color_rgb = profile[name]
             color = np.array(colorsys.rgb_to_hsv(
                 *(np.array(color_rgb)/255)))  # Profile color as HSV
 
             losses = np.abs(chsv-color).mean(axis=1)  # Color diffs
-            n = np.argmin(losses)  # Find closest center color to profile color
+            for n in np.argsort(losses):
+                if not n in used:
+                    used.add(n)
 
-            self.kProfile[name] = chsv[n]
-            self.kLabels[n] = name
-            self.kNames[name] = n
-            self.kProfRGB[name] = profile[name]
-
+                    self.kProfile[name] = chsv[n]
+                    self.kLabels[n] = name
+                    self.kNames[name] = n
+                    self.kProfRGB[name] = profile[name]
+                    break
         center = np.uint8(center)
 
         res = center[labels.flatten()]
