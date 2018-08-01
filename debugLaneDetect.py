@@ -12,7 +12,7 @@ cam=camera.Camera()
 scale=1
 
 p=ColorProfile.lanes
-calibImg = Ld.getCalibImage(cam)
+calibImg = cv2.imread("calib.png")#Ld.getCalibImage(cam)
 res=Ld.calibrateKmeans(calibImg, p, debug=True)
 #Ld.loadSvm("model.pkl") #NOT VIABLE DIFF PICKLE PROTOCOL
 
