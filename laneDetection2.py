@@ -16,7 +16,7 @@ class ColorProfile:
     lanes = {
         "yellow": (213, 177, 50),  # rgb
         "white": (255, 255, 255),
-        "grey": (150, 150, 150)
+        "grey": (70, 70, 70)
     }
 
 
