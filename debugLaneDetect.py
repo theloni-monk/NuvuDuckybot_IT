@@ -5,7 +5,7 @@ from rpistream import *
 def makeImg(cam, dF, scale):
     image = cv2.resize(cam.image,(0,0),fx=scale,fy=scale)
     #return (dF.process3(image)).astype("uint8")
-    return Ld.process4(res)
+    return Ld.process4(image)
 
 Ld= LaneDetector() #needs more params
 cam=camera.Camera()
