@@ -152,7 +152,7 @@ class LaneDetector:
         Z = self.getZValue(img)
         ret, labels, center = self.runKmeans(Z, K, criteria)
 
-        chsv = np.array([colorsys.rgb_to_hsv(*(c[::-1]/255))
+        chsv = np.array([colorsys.rgb_to_hsv(*(c[::-1]/255.0))
                          for c in center])  # Center colors as HSV
         print("chsv",chsv)
         print("Z",Z)
@@ -161,7 +161,7 @@ class LaneDetector:
             color_rgb = profile[name]
             print(color_rgb)
             color = np.array(colorsys.rgb_to_hsv(
-                *(np.array(color_rgb)/255)))  # Profile color as HSV
+                *(np.array(color_rgb)/255.0)))  # Profile color as HSV
             print(color)
             losses = np.abs(chsv-color).mean(axis=1)  # Color diffs
             print(np.mean(losses))
