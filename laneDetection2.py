@@ -46,7 +46,7 @@ def unwarp(img):
     hLength = 50
     hDepth = 300
 
-    #TODO: tune this 
+    # TODO: tune this
     #   no -Ian
     p = np.array([
         (0, height),
@@ -105,7 +105,7 @@ class LaneDetector:
             img = cam.image
         return img
 
-    def runKmeans(self, Z, K, criteria): # Run Kmeans respectively for python 2/3
+    def runKmeans(self, Z, K, criteria):  # Run Kmeans respectively for python 2/3
         if sys.version_info[0] == 3:
             return cv2.kmeans(Z, K, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
         else:
@@ -126,14 +126,14 @@ class LaneDetector:
         stepSize = kwargs.get("stepSize", 5)
 
         # Get width/height
-        h,w = img.shape[:2]
+        h, w = img.shape[:2]
 
         # Preprocess image
         img = cv2.GaussianBlur(img, blurSize, 0)
 
         criteria = (cv2.TERM_CRITERIA_EPS +
                     cv2.TERM_CRITERIA_MAX_ITER, 10, 1.0)  # Kmeans criteria
-                    
+
         Z = self.getZValue(img)
         ret, labels, center = self.runKmeans(Z, K, criteria)
 
@@ -142,7 +142,8 @@ class LaneDetector:
 
         for name in profile:
             color_rgb = profile[name]
-            color = np.array(colorsys.rgb_to_hsv(*(np.array(color_rgb)/255)))  # Profile color as HSV
+            color = np.array(colorsys.rgb_to_hsv(
+                *(np.array(color_rgb)/255)))  # Profile color as HSV
 
             losses = np.abs(chsv-color).mean(axis=1)  # Color diffs
             n = np.argmin(losses)  # Find closest center color to profile color
@@ -160,7 +161,7 @@ class LaneDetector:
 
         trainX = []
         trainY = []
-        
+
         for x in range(0, labels.shape[1], stepSize):
             for y in range(0, labels.shape[0], stepSize):
                 label = labels[y, x]
@@ -193,10 +194,10 @@ class LaneDetector:
             # svm classification:
             bools = (self.clf.predict(imgin.reshape(pixels, 3)).reshape(
                 (shape[0], shape[1], 1)) == self.kNames[currColor]).astype("float")
-            
+
             boolimg = bools.astype("uint8")*255
 
-            #TODO: use boolimg as a mask on normal img then threshold the img to get rid of noise
+            # TODO: use boolimg as a mask on normal img then threshold the img to get rid of noise
 
             # crop->grayscale->gaussblur->canny
 
@@ -226,13 +227,52 @@ class LaneDetector:
                     m = unzero((y2-y1)/(unzero(x2-x1)))
                     b = y1-m*x1
                     lineColor = currColor
-                    #TODO: throw out horizontal lines
+                    # TODO: throw out horizontal lines
                     cv2.line(debugOut, (0, int(b)),
                              (1000, int(m*1000+b)), tuple(lineColor), 3)
                     cv2.circle(debugOut, (int(x0), int(y0)),
                                4, (255, 0, 0), -1)
 
         return debugOut
+
+    def findLine(self, img, colorId, **kwargs):
+        shape = img.shape
+        bottom = shape[0]
+        # A 1D array where each element is its X value
+        rowMap = np.array([x for x in range(shape[1])])
+        # The extracted map of colorId colored pixels
+        bools = (self.clf.predict(img.reshape(img.size, 3)).reshape(
+                (shape[0], shape[1], 1)) == self.kNames[colorId]).astype("float")
+        # How many pixels up from the bottom to sample
+        depth = kwargs.get("cascadeDepth", 5)
+        # Whether to find the mean or median of the lane pixels to find the lane marker center
+        calcType = kwargs.get("center", "mean")
+
+        if calcType == "mean":
+            # The sum of the X coordinates of each white pixel
+            posSum = np.zeros((shape[1],))
+            pixels = 0
+            for y in range(bottom-depth, bottom):
+                row = bools[y]
+                posSum += rowMap*row
+                # Compute how many row pixels are actually being added to the average
+                pixels += (row == 1).sum()
+
+            return posSum.sum()/pixels
+
+        elif calcType == "median":
+            posSamples = []
+
+            for y in range(bottom-depth, bottom):
+                for cell in bools[y]:
+                    if cell == 1:
+                        posSamples.append(rowMap[x])
+
+            return np.array(posSamples).median()
+
+    def process4(self, img):
+        # Position of the yellow lane marker on the X-axis
+        roadCenter = self.findLine(img, "yellow", cascadeDepth=10)
 
     def loadSvm(self, path):
         with open(path, 'rb') as fid:
