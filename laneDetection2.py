@@ -318,6 +318,7 @@ class LaneDetector:
         print("Robot Pos:   "+str(robotPos))
         print("Lane center: "+str(laneCenter))
         print("-----")
+        return self.getBools(img, "yellow")
         try:
             drawVertical(img, int(laneCenter), (255, 0, 0))
         except:
