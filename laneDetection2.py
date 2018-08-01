@@ -14,7 +14,7 @@ def normLayer(l):
 
 class ColorProfile:
     lanes = {
-        "yellow": (213, 177, 150),  # rgb
+        "yellow": (200, 177, 0),  # rgb
         "white": (255, 255, 255),
         "grey": (90, 90, 70)
     }
@@ -132,7 +132,7 @@ class LaneDetector:
     def calibrateKmeans(self, img, profile, **kwargs):
         # img=region_of_interest(img,getDefault(img.shape[0],img.shape[1]))
         #img = unwarp(img)
-        img = img[img.shape[1]//3:,:,:]
+        img = img[img.shape[0]//3:,:,:]
         # Initialize hyperparamaters
         K = kwargs.get("K", 5)  # How many groups for k-means to cluster into
         debug = kwargs.get("debug", False)  # Verbose/debug output enabled?
@@ -155,22 +155,19 @@ class LaneDetector:
         chsv = np.array([colorsys.rgb_to_hsv(*(c[::-1]/255))
                          for c in center])  # Center colors as HSV
         print("hmm")
-        used = set()
         for name in profile:
             color_rgb = profile[name]
             color = np.array(colorsys.rgb_to_hsv(
                 *(np.array(color_rgb)/255)))  # Profile color as HSV
 
             losses = np.abs(chsv-color).mean(axis=1)  # Color diffs
-            for n in np.argsort(losses):
-                if not n in used:
-                    used.add(n)
+            n = np.argmin(losses)  # Find closest center color to profile color
+        
+            self.kProfile[name] = chsv[n]
+            self.kLabels[n] = name
+            self.kNames[name] = n
+            self.kProfRGB[name] = profile[name]
 
-                    self.kProfile[name] = chsv[n]
-                    self.kLabels[n] = name
-                    self.kNames[name] = n
-                    self.kProfRGB[name] = profile[name]
-                    break
         center = np.uint8(center)
 
         res = center[labels.flatten()]
@@ -302,14 +299,16 @@ class LaneDetector:
             for y in range(bottom-depth, bottom):
                 row = bools[y].reshape((shape[1],))
                 for x, cell in enumerate(row):
-                    if cell == 1:
+                    if cell > 0.01:
                         posSamples.append(rowMap[x])
-
             return np.median(np.array(posSamples))
+        
+        elif calcType == "min":
+            posSum = np.zeros((shape[1],))
 
     def process4(self, img):
         # Position of respective lines on the X-axis
-        img = img[img.shape[0]-200:,:,:]
+        img = img[img.shape[0]//3:,:,:]
         roadCenter = self.findLine(img, "yellow", cascadeDepth=200)
         roadEdge = self.findLine(img, "white", cascadeDepth=100)
         robotPos = img.shape[1]/2
@@ -321,7 +320,7 @@ class LaneDetector:
         print("Robot Pos:   "+str(robotPos))
         print("Lane center: "+str(laneCenter))
         print("-----")
-        return (self.getBools(img, "white")*255).astype("uint8")
+        #return (self.getBools(img, "yellow")).astype("float")
         try:
             drawVertical(img, int(laneCenter), (255, 0, 0))
         except:
