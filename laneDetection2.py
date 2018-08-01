@@ -96,7 +96,7 @@ def unzero(x):
 
 
 def denoise(imgin, boolimg):
-    boolimg = bools.astype("uint8")*255
+    boolimg = boolimg.astype("uint8")*255
 
     Cimg = grayscale(np.bitwise_and(imgin, boolimg))  # masking
     # TODO: use boolimg as a mask on normal img then threshold the img to get rid of noise
