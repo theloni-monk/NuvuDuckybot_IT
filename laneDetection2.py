@@ -184,16 +184,16 @@ class LaneDetector:
             return res2
 
     def process3(self, imgin):
-        imgin = unwarp(imgin) #gets rid of perspective effect
+        imgin = unwarp(imgin)  # gets rid of perspective effect
         shape = imgin.shape
         pixels = shape[0]*shape[1]
         clipping = getDefault(imgin.shape[0], imgin.shape[1])
         Cimgs = []
         print(self.kNames)
         # unwarp->mask->grayscale->gaussblur->canny->houghLines
-        debugOut=imgin
+        debugOut = imgin
         for currColor in self.kNames:
-            
+
             debugOut = imgin
 
             # svm classification:
@@ -235,7 +235,7 @@ class LaneDetector:
                     lineColor = self.kProfRGB[currColor]
                     #TODO: throw out horizontal lines
 
-                    #for debugging, not actually nec
+                    # for debugging, not actually nec
                     cv2.line(debugOut, (0, int(b)),
                              (1000, int(m*1000+b)), tuple(lineColor), 10)
                     cv2.circle(debugOut, (int(x0), int(y0)),
@@ -252,7 +252,7 @@ class LaneDetector:
         bools = (self.clf.predict(img.reshape(img.size, 3)).reshape(
                 (shape[0], shape[1], 1)) == self.kNames[colorId]).astype("float")
         # How many pixels up from the bottom to sample
-        depth = kwargs.get("cascadeDepth", 5)
+        depth = kwargs.get("cascadeDepth", 100)
         # Whether to find the mean or median of the lane pixels to find the lane marker center
         calcType = kwargs.get("center", "mean")
 
@@ -279,12 +279,23 @@ class LaneDetector:
             return np.array(posSamples).median()
 
     def process4(self, img):
-        # Position of the yellow lane marker on the X-axis
-        roadCenter = self.findLine(img, "yellow", cascadeDepth=10)
+        # Position of respective lines on the X-axis
+        roadCenter = self.findLine(img, "yellow", cascadeDepth=100)
+        roadEdge = self.findLine(img, "white", cascadeDepth=40)
+        robotPos = img.shape[1]/2
+        laneCenter = (roadCenter+roadEdge)/2
+        print("-----")
+        print("Stats:\n")
+        print("Road Center: "+str(roadCenter))
+        print("Road Edge:   "+str(roadEdge))
+        print("Robot Pos:   "+str(robotPos))
+        print("Lane center: "+str(laneCenter))
+        print("-----")
+        return img
 
     def loadSvm(self, path):
         with open(path, 'rb') as fid:
-            temp=pickle.load(fid)
+            temp = pickle.load(fid)
             self.clf = temp[0]
             self.kNames=temp[1]
             self.kLabels=temp[2]
@@ -307,6 +318,6 @@ if __name__ == "__main__":
 
 
     while True:
-        cv2.imshow('my webcam', LD.process3(cam.image))  # LD.process3(cam.image))
+        cv2.imshow('my webcam', res)  # LD.process3(cam.image))
         if cv2.waitKey(1) == 27:
             break  # esc to quit
