@@ -312,6 +312,7 @@ class LaneDetector:
             drawVertical(img,int(roadEdge),(255,0,0))
         except:
             pass
+        
         return img#self.getBools(img,"yellow")
 
     def loadSvm(self, path):
