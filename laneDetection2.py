@@ -279,7 +279,7 @@ class LaneDetector:
         bools = self.getBools(img, colorId)
 
         if doDenoising:
-            bools = denoise(img,bools)
+            bools = denoise(img, bools)
 
         if calcType == "mean":
             # The sum of the X coordinates of each white pixel
@@ -306,6 +306,7 @@ class LaneDetector:
 
     def process4(self, img):
         # Position of respective lines on the X-axis
+        img = img[img.shape[0]-200:,:,:]
         roadCenter = self.findLine(img, "yellow", cascadeDepth=200)
         roadEdge = self.findLine(img, "white", cascadeDepth=100)
         robotPos = img.shape[1]/2
