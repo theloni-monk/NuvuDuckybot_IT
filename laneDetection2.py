@@ -296,11 +296,12 @@ if __name__ == "__main__":
     cam = Camera(mirror=True)
     LD = LaneDetector()
     res=LD.calibrateKmeans(LD.getCalibImage(cam), ColorProfile.lanes, debug=True)
-    LD.saveSvm("C:\\Users\\proff\\OneDrive\\Documents\\GitHub\\NuvuDuckieBot-TI\\model.pkl")
+    #LD.saveSvm("C:\\Users\\proff\\OneDrive\\Documents\\GitHub\\NuvuDuckieBot-TI\\model.pkl")
     while True:
-        cv2.imshow('çalibration img',res)
-
+        cv2.imshow('calibration img',res)
+        if cv2.waitKey(1) == 27:
+            break  # esc to quit
     while True:
-        cv2.imshow('my webcam', LD.process3(cam.image))  # LD.process3(cam.image))
+        cv2.imshow('my webcam', res)  # LD.process3(cam.image))
         if cv2.waitKey(1) == 27:
             break  # esc to quit
