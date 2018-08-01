@@ -9,7 +9,7 @@ def makeImg(cam, dF, scale):
 
 Ld= LaneDetector() #needs more params
 cam=camera.Camera()
-scale=1
+scale=0.5
 
 p=ColorProfile.lanes
 calibImg = cv2.imread("calib.png")#Ld.getCalibImage(cam)
