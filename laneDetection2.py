@@ -138,7 +138,7 @@ class LaneDetector:
 
         chsv = np.array([colorsys.rgb_to_hsv(*(c[::-1]/255))
                          for c in center])  # Center colors as HSV
-
+        print("hmm")
         for name in profile:
             color_rgb = profile[name]
             color = np.array(colorsys.rgb_to_hsv(*(np.array(color_rgb)/255)))  # Profile color as HSV
@@ -186,8 +186,10 @@ class LaneDetector:
         clipping = getDefault(imgin.shape[0], imgin.shape[1])
         colors = ["yellow", "white"]
         Cimgs = []
+        print(self.kNames)
         # unwarp->mask->grayscale->gaussblur->canny->houghLines
-        for currColor in colors:
+        debugOut=imgin
+        for currColor in self.kNames:
             
             debugOut = imgin
 
@@ -239,23 +241,25 @@ class LaneDetector:
 
     def loadSvm(self, path):
         with open(path, 'rb') as fid:
-            self.clf = pickle.load(fid)
+            temp=pickle.load(fid)
+            self.clf = temp[0]
+            self.kNames=temp[1]
+            self.kLabels=temp[2]
 
     def saveSvm(self, path):
         with open(path, 'wb') as fid:
-            pickle.dump(self.clf, fid)
-
-    def log(self, m):
-        if self.verbose:
-            print(m)  # printout if verbose
+            pickle.dump([self.clf,self.kNames,self.kLabels], fid)
 
 
 if __name__ == "__main__":
     cam = Camera(mirror=True)
     LD = LaneDetector()
-    p = ColorProfile.lanes
-    LD.loadSVM("/model.pkl")
-    while 1:
-        cv2.imshow('my webcam', res)  # LD.process3(cam.image))
+    res=LD.calibrateKmeans(LD.getCalibImage(cam), ColorProfile.lanes, debug=True)
+    LD.saveSvm("C:\\Users\\proff\\OneDrive\\Documents\\GitHub\\NuvuDuckieBot-TI\\model.pkl")
+    while True:
+        cv2.imshow('çalibration img',res)
+
+    while True:
+        cv2.imshow('my webcam', LD.process3(cam.image))  # LD.process3(cam.image))
         if cv2.waitKey(1) == 27:
             break  # esc to quit
