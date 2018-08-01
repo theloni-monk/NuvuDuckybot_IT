@@ -132,7 +132,7 @@ class LaneDetector:
     def calibrateKmeans(self, img, profile, **kwargs):
         # img=region_of_interest(img,getDefault(img.shape[0],img.shape[1]))
         #img = unwarp(img)
-
+        img = img[img.shape[1]//3:,:,:]
         # Initialize hyperparamaters
         K = kwargs.get("K", 5)  # How many groups for k-means to cluster into
         debug = kwargs.get("debug", False)  # Verbose/debug output enabled?
