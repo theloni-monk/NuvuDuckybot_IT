@@ -14,9 +14,9 @@ def normLayer(l):
 
 class ColorProfile:
     lanes = {
-        "yellow": (213, 177, 50),  # rgb
+        "yellow": (213, 177, 150),  # rgb
         "white": (255, 255, 255),
-        "grey": (70, 70, 70)
+        "grey": (90, 90, 70)
     }
 
 
