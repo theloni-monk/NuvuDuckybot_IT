@@ -5,7 +5,7 @@ from rpistream import *
 def makeImg(cam, dF, scale):
     image = cv2.resize(cam.image,(0,0),fx=scale,fy=scale)
     #return (dF.process3(image)).astype("uint8")
-    return (res)
+    return Ld.process4(cam.image)
 
 Ld= LaneDetector() #needs more params
 cam=camera.Camera()
@@ -15,6 +15,7 @@ p=ColorProfile.lanes
 calibImg = Ld.getCalibImage(cam)
 res=Ld.calibrateKmeans(calibImg, p, debug=True)
 #Ld.loadSvm("model.pkl") #NOT VIABLE DIFF PICKLE PROTOCOL
+
 
 server = streamserver.Server(port=5000)
 server.serve() # Blocking; waits for a connection before continuing
