@@ -348,6 +348,8 @@ class LaneDetector:
     def getBools(self, img, colorId):
         shape = img.shape
         pixels = shape[0]*shape[1]
+        result = self.clf.predict(img.reshape(pixels, 3)
+        print(str(np.amin(result))+" -> "+str(np.amax(result)))
         return (self.clf.predict(img.reshape(pixels, 3)).reshape(
                 (shape[0], shape[1], 1)) == self.kNames[colorId]).astype("float")
 
@@ -367,7 +369,6 @@ class LaneDetector:
         doDenoising = kwargs.get("denoise", False)
         # The extracted map of colorId colored pixels
         bools = self.getBools(img, colorId)
-        print(bools)
 
         if doDenoising:
             bools = denoise(img, bools) #converts to grayscale
