@@ -393,7 +393,7 @@ class LaneDetector:
                 for x, cell in enumerate(row):
                     if cell == 1:
                         posSamples.append(rowMap[x])
-            #print(posSamples)
+            print(posSamples)
             return np.median(np.array(posSamples))
 
         elif calcType == "min":
