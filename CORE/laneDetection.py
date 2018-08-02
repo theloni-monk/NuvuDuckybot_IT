@@ -351,9 +351,10 @@ class LaneDetector:
         result = self.clf.predict(img.reshape(pixels, 3))
         print(str(np.amin(result))+" -> "+str(np.amax(result)))
         print(self.kNames)
-        print(self.kNames[colorid])
+        print(self.kNames[colorId]) 
         return (self.clf.predict(img.reshape(pixels, 3)).reshape(
                 (shape[0], shape[1], 1)) == self.kNames[colorId]).astype("float")
+
 
     def findLine(self, img, colorId, **kwargs):
         """Find the position of the base of a line along the x-axis"""
