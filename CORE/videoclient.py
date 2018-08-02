@@ -3,7 +3,7 @@ from rpistream.streamclient import Client
 from multiprocessing import Process, Queue, Value
 import time
 
-serverIP = "192.168.1.162"
+serverIP = "18.111.87.85"
 serverPort = 5000
 writeFile = False
 cameraRes = (320,240)

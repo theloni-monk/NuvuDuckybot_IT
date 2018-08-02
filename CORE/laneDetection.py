@@ -384,9 +384,10 @@ class LaneDetector:
 
         elif calcType == "median":
             posSamples = []
-            print(bools)
+            print(bools.shape)
             for y in range(bottom-depth, bottom):
                 row = bools[y].reshape((shape[1],))
+                print(row)
                 for x, cell in enumerate(row):
                     if cell == 1:
                         posSamples.append(rowMap[x])
