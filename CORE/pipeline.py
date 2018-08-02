@@ -28,7 +28,7 @@ def normVect(v):
 
 startT = 0
 # dummy initial values
-prev = (300, 50, 175)
+PREV = (300, 50, 175)
 
 
 def pipeline(image, motorq, ld, img=False):
@@ -38,7 +38,8 @@ def pipeline(image, motorq, ld, img=False):
     # 2. Ensure the pipeline function takes BOTH the image and motorq.
 
     # motorq.put([32768,32768]) # make the motors go full-speed forward
-
+    prev=PREV
+    
     speed = maxSpeed  # TBD
 
     params = None
