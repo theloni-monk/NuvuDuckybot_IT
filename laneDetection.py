@@ -104,6 +104,10 @@ class LaneDetector:
         self.calibrated = False
         self.clf = None
 
+        self.stacks = None
+
+        # Modifying while in the control loop may cause problems
+        self.RAlookback = kwargs.get("RAlookback",5)
     #calibration and svm training
     def getCalibImage(self, cam, iters=10):
         img = None
@@ -408,6 +412,25 @@ class LaneDetector:
                     pass
                 return (img,(Road(roadEdge,roadCenter), robotPos)) 
         return (Road(roadEdge,roadCenter), robotPos)
+    
+    def rollingAverage(self, p4out):
+        """ Smooths the values returned by process4"""
+        if self.stacks == None:
+            self.stacks = [[] for v in p4out]
+        avgs = []
+        for i,v in enumerate(p4out):
+            stack = self.stacks[i]
+
+            if v != np.nan:
+                stack.append(v)
+
+            if len(stack) > self.RAlookback:
+                del stack[0]
+
+            avg = np.array(stack).mean()
+            avgs.append(avg)
+
+        return avgs
 
     #svm io
     def loadSvm(self, path):
