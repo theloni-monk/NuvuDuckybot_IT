@@ -67,10 +67,11 @@ class Driver:
         else:
             motor.run(Adafruit_MotorHAT.BACKWARD)
 
-        if isBias:
-            if(biasMotor='r'and motor=self.rmotor):
-                speed-=bias
-            elif(biasMotor='l' and motor = self.lmotor):
+        # if isBias:
+        #     if biasMotor == 'r' and motor==self.rmotor:
+        #         speed-=bias
+        #     elif biasMotor='l' and motor ==self.lmotor:
+        #         speed+=bias
 
 
         if 1 <= speed <= 32767:       
