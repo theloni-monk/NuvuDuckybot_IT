@@ -2,6 +2,7 @@ import cv2
 from laneDetection import *
 from PID import *
 import time
+import numpy as np
 
 # The pipeline function takes in a numpy array of dimensions:
 #    "height, width, color-space"
@@ -50,9 +51,9 @@ def pipeline(image, motorq, ld, img=False):
 
     Re=params[0] #road edge
     Rc=params[1] #road center
-    if Re==None:
+    if Re==np.nan or Re == None:
         Re=prev[0]
-    if Rc==None:
+    if Rc==np.nan or Rc==None:
         Rc=prev[1]
 
     Lc=(Re+Rc)/2 #lane center
