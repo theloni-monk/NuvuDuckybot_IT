@@ -139,7 +139,7 @@ class LaneDetector:
         """Nobody knows what this function does because it was copy-pasted from part of the k-means example code"""
         return img.reshape((-1, 3)).astype("float32")
 
-    def calibrateKmeans(self, img, profile, save=False **kwargs):
+    def calibrateKmeans(self, img, profile, save=False, **kwargs):
         """Builds training data for the road-classifying SVM"""
         img = img[img.shape[0]//3:, :, :]  # crop
 
@@ -473,6 +473,6 @@ if __name__ == "__main__":
             break  # esc to quit
 
     while True:
-        cv2.imshow('my webcam', D.processr(cam.image, True, True)[0])
+        cv2.imshow('my webcam', LD.processr(cam.image, True, True)[0])
         if cv2.waitKey(1) == 27:
             break  # esc to quit

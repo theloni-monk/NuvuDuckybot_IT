@@ -18,8 +18,8 @@ pid = PID(p, i, d)
 
 
 def normVect(v):
-    mag = np.sqrt(np.power(v[0], 2)+np.power(v[1], 2))
-    return (v[0]/mag, v[1]/mag)
+	mag = np.sqrt(np.power(v[0], 2)+np.power(v[1], 2))
+	return (v[0]/mag, v[1]/mag)
 
 
 startT = 0
@@ -43,41 +43,41 @@ def pipeline(image, motorq, ld, img=False):
 		various = ld.process4(image, imgOut=True)
 		imgO = various[1]
 		params = various[0]
-    else:
+	else:
 		params=ld.process4(image)
 
-    Re=params[0][0] #road edge
-    Rc=params[0][1] #road center
-    if Re==None:
-        Re=prev[0]
-    if Rc==None:
-        Rc=prev[1]
+	Re=params[0][0] #road edge
+	Rc=params[0][1] #road center
+	if Re==None:
+		Re=prev[0]
+	if Rc==None:
+		Rc=prev[1]
 
-    Lc=(Re+Rc)/2 #lane center
+	Lc=(Re+Rc)/2 #lane center
 
-    prev=(Re,Rc,Lc)
-    RBpos=img.shape/2 #robot position
+	prev=(Re,Rc,Lc)
+	RBpos=img.shape/2 #robot position
 
-    # averageing to reduce noise:
-    Re,Rc,Lc=ld.rollingAverage(Re),ld.rollingAverage(Rc),ld.rollingAverage(Lc)
-    
-    Cdiff=RBpos-Lc
+	# averageing to reduce noise:
+	Re,Rc,Lc=ld.rollingAverage(Re),ld.rollingAverage(Rc),ld.rollingAverage(Lc)
+	
+	Cdiff=RBpos-Lc
 
-    outputdiff=-Cdiff
-    if usePid:
-        pid.setSetpoint(0)
-        outputdiff=pid.update(Cdiff)
-    
-    outputVect=normVect((outputdiff,1))
+	outputdiff=-Cdiff
+	if usePid:
+		pid.setSetpoint(0)
+		outputdiff=pid.update(Cdiff)
+	
+	outputVect=normVect((outputdiff,1))
 
-    speedVect=(outputVect[0]*speed,outputVect[1]*speed)
-    endT=time.time
-    t=endT-startT
-    diff=(np.atan2(x,y)/(t*rotConstant))
-    start=time.time()
+	speedVect=(outputVect[0]*speed,outputVect[1]*speed)
+	endT=time.time
+	t=endT-startT
+	diff=(np.atan2(x,y)/(t*rotConstant))
+	start=time.time()
 
-    speed-=diff
-    motorq.put([speed-diff,speed+diff]) #speed will never be actual speed
+	speed-=diff
+	motorq.put([speed-diff,speed+diff]) #speed will never be actual speed
 
 
 	if img:
