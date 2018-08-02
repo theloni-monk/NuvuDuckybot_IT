@@ -6,7 +6,7 @@ if __name__ == "__main__":
     motor.run(Adafruit_MotorHAT.FORWARD)
     motor.setSpeed(255)
     motor = driver.rmotor
-    motor.run(Adafruit_MotorHAT.FORWARD)
-    motor.setSpeed(-255)
+    motor.run(Adafruit_MotorHAT.BACKWARD)
+    motor.setSpeed(255)
     while 1:
         pass
