@@ -350,6 +350,7 @@ class LaneDetector:
         pixels = shape[0]*shape[1]
         result = self.clf.predict(img.reshape(pixels, 3))
         print(str(np.amin(result))+" -> "+str(np.amax(result)))
+        print(np.unique(result))
         print(self.kNames)
         print(self.kNames[colorId]) 
         result2 = (self.clf.predict(img.reshape(pixels, 3)).reshape(
