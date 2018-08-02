@@ -11,6 +11,9 @@ import time
 # add messages to the queue of the form:
 #	motorq.put( [ left-motor-speed , right-motor-speed ] )
 # i.e.	motorq.put([32768,32768]) # make the motors go full-speed forward
+usePid=True
+maxSpeed=32767 #this the default speed
+rotConstant=7.9135    #rads/sec
 
 
 p, i, d = -0.5, 0.05, 0.01
@@ -56,7 +59,7 @@ def pipeline(image, motorq, ld, img=False):
 	Lc=(Re+Rc)/2 #lane center
 
 	prev=(Re,Rc,Lc)
-	RBpos=img.shape/2 #robot position
+	RBpos=image.shape/2 #robot position
 
 	# averageing to reduce noise:
 	Re,Rc,Lc=ld.rollingAverage(Re),ld.rollingAverage(Rc),ld.rollingAverage(Lc)
@@ -73,7 +76,7 @@ def pipeline(image, motorq, ld, img=False):
 	speedVect=(outputVect[0]*speed,outputVect[1]*speed)
 	endT=time.time
 	t=endT-startT
-	diff=(np.atan2(x,y)/(t*rotConstant))
+	diff=(np.atan2(speedVect[0],speedVect[1])/(t*rotConstant))
 	start=time.time()
 
 	speed-=diff

@@ -61,7 +61,7 @@ class PID:
 
         self.output = 0.0
     
-    def setSetpoint(sp):
+    def setSetpoint(self, sp):
         self.SetPoint=sp
         
     def update(self, feedback_value):
