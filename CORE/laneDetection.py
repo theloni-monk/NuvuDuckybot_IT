@@ -367,7 +367,7 @@ class LaneDetector:
         doDenoising = kwargs.get("denoise", False)
         # The extracted map of colorId colored pixels
         bools = self.getBools(img, colorId)
-        print(bools.shape)
+        print(bools)
 
         if doDenoising:
             bools = denoise(img, bools) #converts to grayscale
@@ -391,9 +391,9 @@ class LaneDetector:
                 row = bools[y].reshape((shape[1],))
                 #print(row)
                 for x, cell in enumerate(row):
-                    if cell == 1:
+                    if cell:
                         posSamples.append(rowMap[x])
-            print(posSamples)
+            #print(posSamples)
             return np.median(np.array(posSamples))
 
         elif calcType == "min":
