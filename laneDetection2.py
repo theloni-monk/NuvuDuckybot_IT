@@ -1,4 +1,10 @@
+# Hello, I wrote most of the code in this file,
+# and most of the code here is unreadable and poorly documented
+# This means that if something breaks or doesn't work as intended,
+# you shouldn't come tell me about it, because it's probably not a bug, just an unintended feature
+
 import cv2
+# It's very annoying that we don't use a local copy of our rpistream library because it needs fixing every day
 from rpistream.camera import Camera
 import numpy as np
 import time
@@ -105,6 +111,8 @@ def denoise(imgin, boolimg):
     Cimg = Cimg.astype("float")/255
 
     return Cimg
+
+
 class LaneDetector:
     def __init__(self, **kwargs):
         self.kProfile = {}
@@ -113,6 +121,11 @@ class LaneDetector:
         self.kProfRGB = {}
         self.calibrated = False
         self.clf = None
+
+        self.stacks = None
+
+        # Modifying while in the control loop may cause problems
+        self.RAlookback = kwargs.get("RAlookback",5)
 
     def getCalibImage(self, cam, iters=10):
         img = None
@@ -127,11 +140,13 @@ class LaneDetector:
             return cv2.kmeans(Z, K, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
 
     def getZValue(self, img):
+        """Nobody knows what this function does because it was copy-pasted from part of the k-means example code"""
         return img.reshape((-1, 3)).astype("float32")
 
     def calibrateKmeans(self, img, profile, **kwargs):
+        """Builds training data for the road-classifying SVM"""
 
-        img = img[img.shape[0]//3:,:,:] #crop
+        img = img[img.shape[0]//3:, :, :]  # crop
 
         # Initialize hyperparamaters
         K = kwargs.get("K", 5)  # How many groups for k-means to cluster into
@@ -154,10 +169,10 @@ class LaneDetector:
 
         chsv = np.array([colorsys.rgb_to_hsv(*(c[::-1]/255.0))
                          for c in center])  # Center colors as HSV
-        print("chsv",chsv)
-        print("Z",Z)
+        print("chsv", chsv)
+        print("Z", Z)
         for name in profile:
-            print("Processing",name)
+            print("Processing", name)
             color_rgb = profile[name]
             print(color_rgb)
             color = np.array(colorsys.rgb_to_hsv(
@@ -202,6 +217,7 @@ class LaneDetector:
             return res2
 
     def process3(self, imgin):
+        """(Deprecated) Find lines in the image using Hough transform"""
         imgin = unwarp(imgin)  # gets rid of perspective effect
         shape = imgin.shape
         pixels = shape[0]*shape[1]
@@ -268,6 +284,7 @@ class LaneDetector:
                 (shape[0], shape[1], 1)) == self.kNames[colorId]).astype("float")
 
     def findLine(self, img, colorId, **kwargs):
+        """Find the position of the base of a line along the x-axis"""
         shape = img.shape
         pixels = shape[0]*shape[1]
         bottom = shape[0]
@@ -282,14 +299,14 @@ class LaneDetector:
         # The extracted map of colorId colored pixels
         bools = self.getBools(img, colorId)
 
-        if doDenoising:
+        if doDenoising: # Not completely tested, use may be detrimental to results
             bools = denoise(img, bools)
 
         if calcType == "mean":
             # The sum of the X coordinates of each white pixel
             posSum = np.zeros((shape[1],))
             pixels = 0
-            for y in range(bottom-depth, bottom):
+            for y in ranwge(bottom-depth, bottom):
                 row = bools[y].reshape((shape[1],))
                 posSum += rowMap*row
                 # Compute how many row pixels are actually being added to the average
@@ -306,40 +323,51 @@ class LaneDetector:
                     if cell > 0.01:
                         posSamples.append(rowMap[x])
             return np.median(np.array(posSamples))
-        
+
         elif calcType == "min":
             posSum = np.zeros((shape[1],))
 
-    def process4(self, img):
+    def process4(self, img, **kwargs):
+        """Finds the position of lines based on their base pixel coordinates"""
         # Position of respective lines on the X-axis
-        img = img[img.shape[0]//3:,:,:]
+        img = img[img.shape[0]//3:, :, :]
         roadCenter = self.findLine(img, "yellow", cascadeDepth=200)
         roadEdge = self.findLine(img, "white", cascadeDepth=100)
         robotPos = img.shape[1]/2
         laneCenter = (roadCenter+roadEdge)/2
-        print("-----")
-        print("Stats:\n")
-        print("Road Center: "+str(roadCenter))
-        print("Road Edge:   "+str(roadEdge))
-        print("Robot Pos:   "+str(robotPos))
-        print("Lane center: "+str(laneCenter))
-        print("-----")
-        #return (self.getBools(img, "yellow")).astype("float")
-        try:
-            drawVertical(img, int(laneCenter), (255, 0, 0))
-        except:
-            pass
-        try:
-            drawVertical(img, int(roadCenter), (255, 0, 0))
-        except:
-            pass
-        try:
-            drawVertical(img, int(roadEdge), (255, 0, 0))
-        except:
-            pass
-        return img  # self.getBools(img,"yellow")
+        if kwargs.get("verbose", False):
+            print("-----")
+            print("Stats:\n")
+            print("Road Center: "+str(roadCenter))
+            print("Road Edge:   "+str(roadEdge))
+            print("Robot Pos:   "+str(robotPos))
+            print("Lane center: "+str(laneCenter))
+            print("-----")
+
+        # self.getBools(img,"yellow")
+        return roadCenter, roadEdge, laneCenter, robotPos, img
+
+    def rollingAverage(self, p4out):
+        """ Smooths the values returned by process4"""
+        if self.stacks == None:
+            self.stacks = [[] for v in p4out]
+        avgs = []
+        for i,v in enumerate(p4out):
+            stack = self.stacks[i]
+
+            if v != np.nan:
+                stack.append(v)
+
+            if len(stack) > self.RAlookback:
+                del stack[0]
+
+            avg = np.array(stack).mean()
+            avgs.append(avg)
+
+        return avgs
 
     def loadSvm(self, path):
+        """Loads any premade SVM model from a file"""
         with open(path, 'rb') as fid:
             temp = pickle.load(fid)
             self.clf = temp[0]
@@ -357,7 +385,7 @@ if __name__ == "__main__":
     cam = Camera(mirror=True)
     LD = LaneDetector()
     calibImg = LD.getCalibImage(cam)
-    cv2.imwrite("calib.png",calibImg)
+    cv2.imwrite("calib.png", calibImg)
     res = LD.calibrateKmeans(calibImg, ColorProfile.lanes, debug=True)
     LD.saveSvm("model.pkl")
     while True:
