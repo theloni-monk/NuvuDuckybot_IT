@@ -1,10 +1,5 @@
-<<<<<<< HEAD
-from laneDetection import *
-from PID import PID
-=======
 from laneDetection import LaneDetector,ColorProfile
 from PID import *
->>>>>>> master
 from rpistream.camera import Camera
 import time
 import cv2

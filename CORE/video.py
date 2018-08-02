@@ -81,7 +81,7 @@ def videoProcess(motorq, videoq):
         # ld.getCalibImage(cam),ColorProfile.lanes)
         ld.calibrateKmeans(cv2.imread('calib.png'), ColorProfile.lanes)
     else:
-        ld.loadSvm('model.pkl')  # pre-trained svm
+        ld.loadSvm("../test/model.pkl")  # pre-trained svm
 
     while True:
         # we are now in the video loop, check if we should exit

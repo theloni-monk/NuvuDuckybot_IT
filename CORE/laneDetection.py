@@ -139,7 +139,7 @@ class LaneDetector:
         """Nobody knows what this function does because it was copy-pasted from part of the k-means example code"""
         return img.reshape((-1, 3)).astype("float32")
 
-    def calibrateKmeans(self, img, profile, **kwargs):
+    def calibrateKmeans(self, img, profile, save=False **kwargs):
         """Builds training data for the road-classifying SVM"""
         img = img[img.shape[0]//3:, :, :]  # crop
 
@@ -207,7 +207,8 @@ class LaneDetector:
         self.clf.fit(trainX, trainY)
 
         self.calibrated = True
-
+        if save:
+            self.saveSvm("../test/model.pkl")
         if debug:
             return res2
 
