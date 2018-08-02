@@ -192,7 +192,7 @@ class LaneDetector:
         if debug:
             return res2
 
-    #depracated
+    #depracated: non functional
     def process1(color):
         def getLineColor(img, m, b, step=2):
             bottom = min(max((-b)/m, 0), img.shape[1]-1)
@@ -324,6 +324,12 @@ class LaneDetector:
 
 
     #process4 helpers
+    class Road:
+        def __init__(self,e,c):
+            self.ePos=e
+            self.cPos=c
+            #remember that bot an be on either side of raod
+
     def getBools(self, img, colorId):
         shape = img.shape
         pixels = shape[0]*shape[1]
@@ -373,34 +379,35 @@ class LaneDetector:
         elif calcType == "min":
             posSum = np.zeros((shape[1],))
 
-    def process4(self, img):
+    def process4(self, img, debug=False, imgOut=False):
         # Position of respective lines on the X-axis
         img = img[img.shape[0]//3:,:,:]
         roadCenter = self.findLine(img, "yellow", cascadeDepth=200)
         roadEdge = self.findLine(img, "white", cascadeDepth=100)
         robotPos = img.shape[1]/2
-        laneCenter = (roadCenter+roadEdge)/2
-        print("-----")
-        print("Stats:\n")
-        print("Road Center: "+str(roadCenter))
-        print("Road Edge:   "+str(roadEdge))
-        print("Robot Pos:   "+str(robotPos))
-        print("Lane center: "+str(laneCenter))
-        print("-----")
-        #return (self.getBools(img, "yellow")).astype("float")
-        try:
-            drawVertical(img, int(laneCenter), (255, 0, 0))
-        except:
-            pass
-        try:
-            drawVertical(img, int(roadCenter), (255, 0, 0))
-        except:
-            pass
-        try:
-            drawVertical(img, int(roadEdge), (255, 0, 0))
-        except:
-            pass
-        return img  # self.getBools(img,"yellow")
+        if debug:
+            print("-----")
+            print("Stats:\n")
+            print("Road Center: "+str(roadCenter))
+            print("Road Edge:   "+str(roadEdge))
+            print("Robot Pos:   "+str(robotPos))
+            print("Lane center: "+str((roadCenter+roadEdge)/2))
+            print("-----")
+            if imgOut:
+                try:
+                    drawVertical(img, int((roadCenter+roadEdge)/2), (0, 0, 255)) #BGR
+                except:
+                    pass
+                try:
+                    drawVertical(img, int(roadCenter), (255, 0, 0))
+                except:
+                    pass
+                try:
+                    drawVertical(img, int(roadEdge), (255, 0, 0))
+                except:
+                    pass
+                return (img,(Road(roadEdge,roadCenter), robotPos)) 
+        return (Road(roadEdge,roadCenter), robotPos)
 
     #svm io
     def loadSvm(self, path):
@@ -425,13 +432,11 @@ if __name__ == "__main__":
     res = LD.calibrateKmeans(calibImg, ColorProfile.lanes, debug=True)
     LD.saveSvm("model.pkl")
     while True:
-
-        cv2.imshow('calibration img', LD.process4(cam.image))
-
+        cv2.imshow('calibration img', res)
         if cv2.waitKey(1) == 27:
             break  # esc to quit
 
     while True:
-        cv2.imshow('my webcam', res)  # LD.process3(cam.image))
+        cv2.imshow('my webcam', D.processr(cam.image,True,True)[0])
         if cv2.waitKey(1) == 27:
             break  # esc to quit
