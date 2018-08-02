@@ -354,8 +354,8 @@ class LaneDetector:
     def findLine(self, img, colorId, **kwargs):
         """Find the position of the base of a line along the x-axis"""
         shape = img.shape
-        pixels = shape[0]*shape[1]
-        bottom = shape[0]
+        pixels = shape[0]*shape[1] 
+        bottom = shape[0] 
         # A 1D array where each element is its X value
         rowMap = np.array([x for x in range(shape[1])])
         # How many pixels up from the bottom to sample
@@ -366,6 +366,7 @@ class LaneDetector:
         doDenoising = kwargs.get("denoise", False)
         # The extracted map of colorId colored pixels
         bools = self.getBools(img, colorId)
+        print(bools.shape)
 
         if doDenoising:
             bools = denoise(img, bools) #converts to grayscale
@@ -384,10 +385,10 @@ class LaneDetector:
 
         elif calcType == "median":
             posSamples = []
-            print(bools.shape)
+            print('median bools: '+str(bools.shape))
             for y in range(bottom-depth, bottom):
                 row = bools[y].reshape((shape[1],))
-                print(row)
+                #print(row)
                 for x, cell in enumerate(row):
                     if cell == 1:
                         posSamples.append(rowMap[x])
