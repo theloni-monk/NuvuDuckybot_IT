@@ -1,4 +1,4 @@
-from laneDetection2 import *
+from laneDetection import *
 from rpistream import *
 
 
