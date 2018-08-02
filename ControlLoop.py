@@ -1,4 +1,4 @@
-import laneDetection
+from laneDetection import LaneDetector
 from PID import *
 from rpistream.camera import Camera
 import time
