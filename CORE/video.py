@@ -37,6 +37,8 @@ def streamProcess(motorq, streamq):
     cam = cv2.VideoCapture(0)
     cam.set(3, cam_width)
     cam.set(4, cam_height)
+    ld.calibrateKmeans(cv2.imread("calib.png"))
+    
     while True:
         # we are now in the video loop, check if we should exit
         msg = None
@@ -50,6 +52,7 @@ def streamProcess(motorq, streamq):
             return
 
         try:
+            
             if disconnected:
                 server.serveNoBlock()
             disconnected = False
