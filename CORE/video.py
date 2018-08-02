@@ -100,8 +100,9 @@ def videoProcess(motorq, videoq):
             return
 
         # read a frame from the camera
-        ret, frame = cam.read()
-        if not ret:
+        frame = cam.image
+        
+        if (frame is None) or (not np.any(frame)):
             # return a black frame when the camera retrieves no frame
             return
 
