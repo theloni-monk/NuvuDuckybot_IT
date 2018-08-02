@@ -42,7 +42,7 @@ while True:
     RBpos=img.shape/2 #robot position
 
     #averageing to reduce noise:
-    Re,Rc,Lc=ld.rollingAverage(Re),ld.rollingAverage(Rc),ld.rollingAverage(Lc)
+    Re,Rc,Lc=ld.rollingAverage((Re,Rc,Lc))
     
     Cdiff=RBpos-Lc
 

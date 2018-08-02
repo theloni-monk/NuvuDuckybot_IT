@@ -62,7 +62,8 @@ def pipeline(image, motorq, ld, img=False):
 	RBpos=image.shape[0]/2 #robot position
 
 	# averageing to reduce noise:
-	Re,Rc,Lc=ld.rollingAverage(Re),ld.rollingAverage(Rc),ld.rollingAverage(Lc)
+    misc=ld.rollingAverage((Re,Rc,Lc))
+	Re,Rc,Lc=misc[0],misc[1],misc[2]
 	
 	Cdiff=RBpos-Lc
 
