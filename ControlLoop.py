@@ -1,4 +1,4 @@
-from laneDetection import LaneDetector
+from laneDetection import LaneDetector,ColorProfile
 from PID import *
 from rpistream.camera import Camera
 import time
@@ -10,7 +10,7 @@ rotConstant=7.9135    #rads/sec
 
 cam=Camera()
 ld=LaneDetector()
-ld.calibrateKmeans(cv2.imread("calib.png"))
+ld.calibrateKmeans(cv2.imread("calib.png"),ColorProfile.lanes)
 
 p,i,d= -0.5, 0.05, 0.01
 pid=PID(p,i,d)
