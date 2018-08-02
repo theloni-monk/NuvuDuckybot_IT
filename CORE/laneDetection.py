@@ -384,13 +384,13 @@ class LaneDetector:
 
         elif calcType == "median":
             posSamples = []
-
+            print(bools)
             for y in range(bottom-depth, bottom):
                 row = bools[y].reshape((shape[1],))
                 for x, cell in enumerate(row):
                     if cell == 1:
                         posSamples.append(rowMap[x])
-            print(posSamples)
+            #print(posSamples)
             return np.median(np.array(posSamples))
 
         elif calcType == "min":
@@ -400,7 +400,7 @@ class LaneDetector:
         # Position of respective lines on the X-axis
         img = img[img.shape[0]//3:, :, :]
         roadCenter = self.findLine(img, "yellow", cascadeDepth=200)
-        roadEdge = self.findLine(img, "white", cascadeDepth=100)
+        roadEdge = self.findLine(img, "white", cascadeDepth=200)
         robotPos = img.shape[1]/2
         if debug:
             print("-----")
