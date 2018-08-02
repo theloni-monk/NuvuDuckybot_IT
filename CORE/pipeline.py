@@ -13,7 +13,7 @@ import time
 # i.e.	motorq.put([32768,32768]) # make the motors go full-speed forward
 usePid=True
 maxSpeed=32767 #this the default speed
-rotConstant=7.9135    #rads/sec
+rotConstant=7.9135	 #rads/sec
 
 
 p, i, d = -0.5, 0.05, 0.01
@@ -62,7 +62,7 @@ def pipeline(image, motorq, ld, img=False):
 	RBpos=image.shape[0]/2 #robot position
 
 	# averageing to reduce noise:
-    misc=ld.rollingAverage((Re,Rc,Lc))
+	misc=ld.rollingAverage((Re,Rc,Lc))
 	Re,Rc,Lc=misc[0],misc[1],misc[2]
 	
 	Cdiff=RBpos-Lc
