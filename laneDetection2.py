@@ -209,7 +209,6 @@ class LaneDetector:
         self.clf.fit(trainX, trainY)
 
         self.calibrated = True
-
         if debug:
             return res2
 

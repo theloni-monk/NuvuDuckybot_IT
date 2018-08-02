@@ -1,7 +1,8 @@
-from laneDetection import *
-from PID import PID
+from laneDetection import LaneDetector,ColorProfile
+from PID import *
 from rpistream.camera import Camera
 import time
+import cv2
 
 usePid=True
 maxSpeed=32767 #this the default speed
@@ -9,8 +10,8 @@ rotConstant=7.9135    #rads/sec
 
 cam=Camera()
 ld=LaneDetector()
-ld.calibrateKmeans(ld.getCalibImage(cam))
-
+ld.calibrateKmeans(cv2.imread("calib.png"),ColorProfile.lanes)
+#ld.saveSvm("model.pkl")
 p,i,d= -0.5, 0.05, 0.01
 pid=PID(p,i,d)
 
