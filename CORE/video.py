@@ -37,7 +37,7 @@ def streamProcess(motorq, streamq):
     cam = cv2.VideoCapture(0)
     cam.set(3, cam_width)
     cam.set(4, cam_height)
-    ld.calibrateKmeans(cv2.imread("calib.png"), ColorProfile.lanes)
+    ld.calibrateKmeans(ld.getCalibImage(cam), ColorProfile.lanes)
     
     while True:
         # we are now in the video loop, check if we should exit
@@ -82,7 +82,7 @@ def videoProcess(motorq, videoq):
     # HACK:i feed it a pre done calibration img
     if ReCal:
         # ld.getCalibImage(cam),ColorProfile.lanes)
-        ld.calibrateKmeans(cv2.imread('calib.png'), ColorProfile.lanes)
+        ld.calibrateKmeans(ld.getCalibImage(cam), ColorProfile.lanes)
     else:
         ld.loadSvm("../test/model.pkl")  # pre-trained svm
 

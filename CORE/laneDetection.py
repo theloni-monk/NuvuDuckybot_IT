@@ -213,7 +213,7 @@ class LaneDetector:
             return res2
 
     # depracated: non functional
-    def process1(color):
+    def process1(self, color):
         def getLineColor(img, m, b, step=2):
             bottom = min(max((-b)/m, 0), img.shape[1]-1)
 
@@ -483,6 +483,6 @@ if __name__ == "__main__":
             break  # esc to quit
 
     while True:
-        cv2.imshow('my webcam', LD.processr(cam.image, True, True)[0])
+        cv2.imshow('my webcam', LD.process4(cam.image, True, True)[0])
         if cv2.waitKey(1) == 27:
             break  # esc to quit
