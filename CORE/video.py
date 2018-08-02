@@ -37,7 +37,7 @@ def streamProcess(motorq, streamq):
     cam = cv2.VideoCapture(0)
     cam.set(3, cam_width)
     cam.set(4, cam_height)
-    ld.calibrateKmeans(cv2.imread("calib.png"))
+    ld.calibrateKmeans(cv2.imread("calib.png"), ColorProfile.lanes)
     
     while True:
         # we are now in the video loop, check if we should exit
