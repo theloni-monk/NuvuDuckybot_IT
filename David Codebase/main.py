@@ -50,6 +50,7 @@ if __name__ == '__main__':
     # Create a Process for the gamepad, and give it the gamepad queue.
     gamepadp = Process(target=gamepad.gamepadProcess,
                        args=(gamepadq, motorq, videoq, streamq))
+    
     # Start the gamepadProcess
     gamepadp.start()
 

@@ -8,6 +8,7 @@ from multiprocessing import Process, Queue
 from rpistream.streamserver import Server
 # Import the pipeline code
 import pipeline
+import laneDetection
 # Import the debug constant
 from debug import VERBOSE
 import socket
@@ -48,7 +49,7 @@ def streamProcess(motorq,streamq):
 		
 		try:
 			if disconnected:
-				server.serveNoWait()
+				server.serveNoBlock()
 			disconnected = False
 			server.stream(retrieveImage,[cam,motorq])
 		except socket.error as exc:
@@ -60,12 +61,20 @@ def streamProcess(motorq,streamq):
 
 
 def videoProcess(motorq,videoq):
+	
 	global cam_width, cam_height
 	cam = cv2.VideoCapture(0)
 	cam.set(3,cam_width)
 	cam.set(4,cam_height)
+	ReCal=False
 	# spwan the streaming video process
-
+	#generate the lane detector
+	ld=LaneDetector()
+	if ReCale:
+		ld.calibrateKmeans(ld.getCalibImage(cam))
+	else:
+		ld.loadSvm('model.pkl') #pre-trained svm
+	
 	while True:
 		# we are now in the video loop, check if we should exit
 		msg = None

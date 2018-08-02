@@ -108,6 +108,7 @@ class LaneDetector:
 
         # Modifying while in the control loop may cause problems
         self.RAlookback = kwargs.get("RAlookback",5)
+
     #calibration and svm training
     def getCalibImage(self, cam, iters=10):
         img = None
@@ -328,12 +329,7 @@ class LaneDetector:
 
 
     #process4 helpers
-    class Road:
-        def __init__(self,e,c):
-            self.ePos=e
-            self.cPos=c
-            #remember that bot an be on either side of raod
-
+ 
     def getBools(self, img, colorId):
         shape = img.shape
         pixels = shape[0]*shape[1]
@@ -410,8 +406,8 @@ class LaneDetector:
                     drawVertical(img, int(roadEdge), (255, 0, 0))
                 except:
                     pass
-                return (img,(Road(roadEdge,roadCenter), robotPos)) 
-        return (Road(roadEdge,roadCenter), robotPos)
+                return ((roadEdge, roadCenter), robotPos, img)
+        return ((roadEdge, roadCenter), robotPos)
     
     def rollingAverage(self, p4out):
         """ Smooths the values returned by process4"""

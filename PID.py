@@ -39,7 +39,7 @@ class PID:
         self.Kp = P
         self.Ki = I
         self.Kd = D
-
+        self.SetPoint=None
         self.sample_time = 0.00
         self.current_time = time.time()
         self.last_time = self.current_time
@@ -60,7 +60,10 @@ class PID:
         self.windup_guard = 20.0
 
         self.output = 0.0
-
+    
+    def setSetpoint(sp):
+        self.SetPoint=sp
+        
     def update(self, feedback_value):
         """Calculates PID value for given reference feedback
 
