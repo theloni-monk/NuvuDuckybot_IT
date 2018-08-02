@@ -1,7 +1,4 @@
-# Hello, I wrote most of the code in this file,
-# and most of the code here is unreadable and poorly documented
-# This means that if something breaks or doesn't work as intended,
-# you shouldn't come tell me about it, because it's probably not a bug, just an unintended feature
+
 
 import cv2
 # It's very annoying that we don't use a local copy of our rpistream library because it needs fixing every day

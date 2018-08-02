@@ -1,3 +1,8 @@
+# Hello, I wrote most of the code in this file,
+# and most of the code here is unreadable and poorly documented
+# This means that if something breaks or doesn't work as intended,
+# you shouldn't come tell me about it, because it's probably not a bug, just an unintended feature
+
 import cv2
 from rpistream.camera import Camera
 import numpy as np
@@ -122,10 +127,11 @@ class LaneDetector:
             return cv2.kmeans(Z, K, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
 
     def getZValue(self, img):
+        """Nobody knows what this function does because it was copy-pasted from part of the k-means example code"""
         return img.reshape((-1, 3)).astype("float32")
 
     def calibrateKmeans(self, img, profile, **kwargs):
-
+        """Builds training data for the road-classifying SVM"""
         img = img[img.shape[0]//3:,:,:] #crop
 
         # Initialize hyperparamaters
@@ -341,6 +347,7 @@ class LaneDetector:
                 (shape[0], shape[1], 1)) == self.kNames[colorId]).astype("float")
 
     def findLine(self, img, colorId, **kwargs):
+        """Find the position of the base of a line along the x-axis"""
         shape = img.shape
         pixels = shape[0]*shape[1]
         bottom = shape[0]
