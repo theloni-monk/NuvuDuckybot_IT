@@ -74,9 +74,7 @@ def streamProcess(motorq, streamq):
 def videoProcess(motorq, videoq):
 
     global cam_width, cam_height
-    cam = Camera
-    cam.set(3, cam_width)
-    cam.set(4, cam_height)
+    cam = Camera()
 
     ReCal = True  # recalibration on
     # generate the lane detector
