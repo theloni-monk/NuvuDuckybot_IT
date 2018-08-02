@@ -6,6 +6,7 @@ import os
 from multiprocessing import Process, Queue
 # Import library for streaming video
 from rpistream.streamserver import Server
+from rpistream.camera import Camera
 # Import the pipeline code
 import pipeline
 from laneDetection import *
@@ -73,7 +74,7 @@ def streamProcess(motorq, streamq):
 def videoProcess(motorq, videoq):
 
     global cam_width, cam_height
-    cam = cv2.VideoCapture(0)
+    cam = Camera
     cam.set(3, cam_width)
     cam.set(4, cam_height)
 
