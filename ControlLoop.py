@@ -1,6 +1,6 @@
 import laneDetection
 from PID import *
-import rpistream.camera.Camera
+from rpistream.camera import Camera
 import time
 
 usePid=True
