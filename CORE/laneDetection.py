@@ -348,7 +348,7 @@ class LaneDetector:
     def getBools(self, img, colorId):
         shape = img.shape
         pixels = shape[0]*shape[1]
-        result = self.clf.predict(img.reshape(pixels, 3)
+        result = self.clf.predict(img.reshape(pixels, 3))
         print(str(np.amin(result))+" -> "+str(np.amax(result)))
         return (self.clf.predict(img.reshape(pixels, 3)).reshape(
                 (shape[0], shape[1], 1)) == self.kNames[colorId]).astype("float")
