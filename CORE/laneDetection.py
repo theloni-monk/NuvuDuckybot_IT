@@ -354,6 +354,7 @@ class LaneDetector:
     def findLine(self, img, colorId, **kwargs):
         """Find the position of the base of a line along the x-axis"""
         shape = img.shape
+        print("\n image shape: "+str(shape))
         pixels = shape[0]*shape[1] 
         bottom = shape[0] 
         # A 1D array where each element is its X value
