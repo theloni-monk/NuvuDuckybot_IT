@@ -368,7 +368,7 @@ class LaneDetector:
         bools = self.getBools(img, colorId)
 
         if doDenoising:
-            bools = denoise(img, bools)
+            bools = denoise(img, bools) #converts to grayscale
 
         if calcType == "mean":
             # The sum of the X coordinates of each white pixel
@@ -388,7 +388,7 @@ class LaneDetector:
             for y in range(bottom-depth, bottom):
                 row = bools[y].reshape((shape[1],))
                 for x, cell in enumerate(row):
-                    if cell > 0.01:
+                    if cell == 1:
                         posSamples.append(rowMap[x])
             return np.median(np.array(posSamples))
 
