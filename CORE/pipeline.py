@@ -51,9 +51,9 @@ def pipeline(image, motorq, ld, img=False):
 
     Re=params[0] #road edge
     Rc=params[1] #road center
-    if Re==np.nan or Re == None:
+    if np.isnan(Re) or Re == None:
         Re=prev[0]
-    if Rc==np.nan or Rc==None:
+    if np.isnan(Rc) or Rc==None:
         Rc=prev[1]
 
     Lc=(Re+Rc)/2 #lane center
