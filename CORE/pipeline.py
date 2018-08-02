@@ -76,7 +76,7 @@ def pipeline(image, motorq, ld, img=False):
     outputVect=normVect((outputdiff,1))
 
     speedVect=(outputVect[0]*speed,outputVect[1]*speed)
-    endT=time.time
+    endT=time.time()
     t=endT-startT
     diff=(np.atan2(speedVect[0],speedVect[1])/(t*rotConstant))
     start=time.time()
