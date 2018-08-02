@@ -4,6 +4,7 @@ if __name__ == "__main__":
     driver = Driver()
     
     while 1:
+        print("Running...")
         motor = driver.lmotor
         motor.run(Adafruit_MotorHAT.FORWARD)
         motor.setSpeed(255)
