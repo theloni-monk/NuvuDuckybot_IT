@@ -32,14 +32,14 @@ PREV = (300, 50, 175)
 
 
 def pipeline(image, motorq, ld, img=False):
-
+    print("\npipeline shape: "+str(image.shape))
     # THINGS YOU SHOULD DO...
     # 1. Copy the code INSIDE your pipeline function here.
     # 2. Ensure the pipeline function takes BOTH the image and motorq.
 
     # motorq.put([32768,32768]) # make the motors go full-speed forward
     prev=PREV
-    
+
     speed = maxSpeed  # TBD
 
     params = None
