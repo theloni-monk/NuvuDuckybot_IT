@@ -31,7 +31,6 @@ prev = (300, 50, 175)
 
 
 def pipeline(image, motorq, ld, img=False):
-    print("running pipeline...")
 
     # THINGS YOU SHOULD DO...
     # 1. Copy the code INSIDE your pipeline function here.
@@ -47,7 +46,7 @@ def pipeline(image, motorq, ld, img=False):
         imgO = various[1]
         params = various[0]
     else:
-        params=ld.process4(image)
+        params=ld.process4(image,debug=True)
 
     Re=params[0] #road edge
     Rc=params[1] #road center
@@ -79,6 +78,8 @@ def pipeline(image, motorq, ld, img=False):
     endT=time.time()
     t=endT-startT
     diff=(np.arctan2(speedVect[0],speedVect[1])/(t*rotConstant))
+    print(speedVect)
+    print(diff)
     start=time.time()
 
     speed-=diff
