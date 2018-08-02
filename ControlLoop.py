@@ -2,6 +2,7 @@ from laneDetection import LaneDetector
 from PID import *
 from rpistream.camera import Camera
 import time
+import cv2
 
 usePid=True
 maxSpeed=32767 #this the default speed
