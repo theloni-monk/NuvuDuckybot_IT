@@ -11,7 +11,7 @@ rotConstant=7.9135    #rads/sec
 cam=Camera()
 ld=LaneDetector()
 ld.calibrateKmeans(cv2.imread("calib.png"),ColorProfile.lanes)
-ld.saveSvm("model.pkl")
+#ld.saveSvm("model.pkl")
 p,i,d= -0.5, 0.05, 0.01
 pid=PID(p,i,d)
 
