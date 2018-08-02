@@ -6,4 +6,4 @@ if __name__ == "__main__":
     motor.run(Adafruit_MotorHAT.FORWARD)
     motor.setSpeed(255)
     while 1:
-        pass
+        motor.setSpeed(255)
