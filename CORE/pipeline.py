@@ -49,8 +49,8 @@ def pipeline(image, motorq, ld, img=False):
 	else:
 		params=ld.process4(image)
 
-	Re=params[0][0] #road edge
-	Rc=params[0][1] #road center
+	Re=params[0] #road edge
+	Rc=params[1] #road center
 	if Re==None:
 		Re=prev[0]
 	if Rc==None:
