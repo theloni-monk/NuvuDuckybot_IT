@@ -59,7 +59,7 @@ def pipeline(image, motorq, ld, img=False):
 	Lc=(Re+Rc)/2 #lane center
 
 	prev=(Re,Rc,Lc)
-	RBpos=image.shape/2 #robot position
+	RBpos=image.shape[0]/2 #robot position
 
 	# averageing to reduce noise:
 	Re,Rc,Lc=ld.rollingAverage(Re),ld.rollingAverage(Rc),ld.rollingAverage(Lc)
