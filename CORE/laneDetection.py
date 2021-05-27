@@ -212,7 +212,7 @@ class LaneDetector:
         if debug:
             return res2
 
-    # depracated: non functional
+    # deprecated: non functional
     def process1(self, color):
         def getLineColor(img, m, b, step=2):
             bottom = min(max((-b)/m, 0), img.shape[1]-1)
